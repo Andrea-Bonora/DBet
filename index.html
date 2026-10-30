@@ -184,18 +184,33 @@
             transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
+
+        /* Fix iPhone PWA Standalone (Notch / Dynamic Island & Safe Areas) */
+        .ios-safe-header {
+            padding-top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
+        }
+        .ios-safe-bottom-nav {
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.85rem);
+        }
+        .ios-app-shell {
+            min-height: 100dvh;
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
+        }
+        .ios-toast-safe {
+            top: calc(env(safe-area-inset-top, 0px) + 4.25rem);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center text-zinc-100">
+<body class="min-h-[100dvh] flex flex-col items-center text-zinc-100">
 
-    <!-- Contenitore Mobile App con Bagliori Ambientali Liquid Glass -->
-    <div id="appTouchContainer" class="w-full max-w-[480px] min-h-screen flex flex-col relative shadow-2xl border-x border-white/10 pb-32 overflow-hidden">
+    <!-- Contenitore Mobile App ottimizzato per iPhone PWA (100dvh + Safe Area) -->
+    <div id="appTouchContainer" class="w-full max-w-[480px] ios-app-shell flex flex-col relative shadow-2xl border-x border-white/10 overflow-x-hidden">
 
         <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
-        <div class="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
+        <div class="pointer-events-none fixed top-20 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
 
-        <!-- TOP APP BAR: Logo Aggressivo DBet (D+B), Nome App, Pulsante Debug, Pulsante Impostazioni -->
-        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 py-3 flex items-center justify-between gap-2">
+        <!-- TOP APP BAR: Safe Area per iPhone Notch/Dynamic Island, Logo DBet, Debug, Impostazioni -->
+        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 pb-3 ios-safe-header flex items-center justify-between gap-2">
             <div class="flex items-center gap-3 min-w-0">
                 <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
                 <div class="w-11 h-11 rounded-2xl bg-darkbg/90 border border-brand-400/50 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
@@ -615,17 +630,38 @@
         </div>
 
         <!-- TOAST NOTIFICATION LIQUID GLASS -->
-        <div id="appToast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full liquid-glass-deep border-brand-400/60 text-white text-xs font-bold shadow-2xl flex items-center gap-2 max-w-[90vw]">
+        <div id="appToast" class="fixed ios-toast-safe left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full liquid-glass-deep border-brand-400/60 text-white text-xs font-bold shadow-2xl flex items-center gap-2 max-w-[90vw]">
             <i id="appToastIcon" class="fa-solid fa-circle-check text-brand-400"></i>
             <span id="appToastText">Operazione completata</span>
         </div>
 
         <!-- ============================================================================
-             SCHERMATA DI BLOCCO TOTALE: LOGIN PROPRIETARIO & SINGLE-OWNER VAULT (FIRESTORE)
-             Impedisce qualsiasi accesso o utilizzo dell'app a chi non è il proprietario
+             SCHERMATA DI BLOCCO TOTALE: CARICAMENTO SESSIONE + LOGIN PROPRIETARIO
+             Se l'utente è già loggato, mostra solo il loader e accede direttamente
              ============================================================================ -->
         <div id="authGateOverlay" class="fixed inset-0 z-50 bg-[#0b0b0e]/95 backdrop-blur-2xl flex items-center justify-center p-4">
-            <div class="w-full max-w-[390px] liquid-glass-deep rounded-[32px] p-6 space-y-5 border border-white/15 shadow-2xl relative overflow-hidden">
+
+            <!-- Loader Iniziale Verifica Sessione (Visibile di default all'avvio) -->
+            <div id="authSessionLoader" class="flex flex-col items-center justify-center space-y-4 text-center">
+                <div class="w-20 h-20 rounded-3xl bg-darkbg border border-brand-400/50 flex items-center justify-center shadow-2xl shadow-brand-400/20 relative">
+                    <svg class="w-14 h-14 animate-pulse" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="60,6 110,26 98,98 60,114 22,98 10,26" fill="#141418" stroke="#FACC15" stroke-width="3.5"/>
+                        <path d="M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z" fill="#FACC15"/>
+                        <path d="M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z" fill="#FFFFFF"/>
+                        <path d="M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z" fill="#FACC15" stroke="#121214" stroke-width="3.5" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="space-y-1">
+                    <h2 class="font-black text-2xl italic tracking-tighter text-white">D<span class="text-brand-400">Bet</span></h2>
+                    <div class="flex items-center justify-center gap-2 text-xs text-zinc-400 font-semibold">
+                        <i class="fa-solid fa-circle-notch fa-spin text-brand-400"></i>
+                        <span>Verifica accesso in corso...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Login (Nascosta finché Firebase non conferma che non c'è una sessione attiva) -->
+            <div id="authLoginCard" class="hidden w-full max-w-[390px] liquid-glass-deep rounded-[32px] p-6 space-y-5 border border-white/15 shadow-2xl relative overflow-hidden">
                 <div class="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-32 bg-brand-400/15 rounded-full blur-3xl"></div>
 
                 <!-- Header Logo DBet -->
@@ -712,7 +748,7 @@
              FLOATING iOS 26 LIQUID GLASS NAVBAR (Più stretta e compatta a capsula)
              Supporta sia il tocco sia il trascinamento del dito sulla barra
              ============================================================================ -->
-        <div class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto">
+        <div class="fixed ios-safe-bottom-nav left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto">
             <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none touch-none">
                 <!-- Indicatore a Pillola Liquida Scorrevole -->
                 <div id="navLiquidIndicator" class="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-full pointer-events-none z-0"></div>
@@ -810,7 +846,22 @@
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        function revealLoginCard() {
+            const loader = document.getElementById('authSessionLoader');
+            const card = document.getElementById('authLoginCard');
+            if (loader) loader.classList.add('hidden');
+            if (card) card.classList.remove('hidden');
+        }
+
+        function showSessionLoader() {
+            const loader = document.getElementById('authSessionLoader');
+            const card = document.getElementById('authLoginCard');
+            if (loader) loader.classList.remove('hidden');
+            if (card) card.classList.add('hidden');
+        }
+
         async function initFirebaseVault() {
+            showSessionLoader();
             try {
                 let rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
                 const savedLocalCfg = localStorage.getItem('dbet_custom_firebase_config');
@@ -821,6 +872,7 @@
                 }
 
                 if (!rawConfig) {
+                    revealLoginCard();
                     showAuthGateError('Espandi "Collega il tuo Firebase su GitHub Pages" qui sotto e incolla il tuo firebaseConfig JSON.');
                     return;
                 }
@@ -836,16 +888,12 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
 
-                // Se siamo nell'ambiente preview con custom token, usa quello;
-                // altrimenti NON chiama signInAnonymously (che causava auth/admin-restricted-operation!)
-                // ma attende esclusivamente l'autenticazione reale Email/Password del proprietario.
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 }
 
                 hideAuthGateError();
 
-                // Se avevamo già registrato il proprietario su questo dispositivo, mostra direttamente il tab "Accedi"
                 if (localStorage.getItem('dbet_owner_sealed') === 'true') {
                     document.getElementById('authModeTabs').classList.add('hidden');
                     document.getElementById('ownerLockedNotice').classList.remove('hidden');
@@ -854,20 +902,26 @@
 
                 onAuthStateChanged(auth, async (user) => {
                     currentUser = user;
-                    // Sblocca automaticamente se l'utente ha già una sessione Email/Password valida attiva
+                    // Se l'utente è già loggato, sblocca direttamente l'app senza mai mostrare il form di login
                     if (user && !user.isAnonymous && user.email) {
                         await verifyAndUnlockAuthenticatedUser(user);
+                    } else {
+                        revealLoginCard();
                     }
                 });
 
             } catch (e) {
+                revealLoginCard();
                 showAuthGateError('Errore inizializzazione Firebase: ' + (e.message || 'Configurazione non valida'));
             }
         }
 
         // Verifica sul documento singleton Firestore che l'utente loggato sia l'UNICO proprietario
         async function verifyAndUnlockAuthenticatedUser(user) {
-            if (!db || !user) return;
+            if (!db || !user) {
+                revealLoginCard();
+                return;
+            }
             try {
                 const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
                 const snap = await getDoc(ownerDocRef);
@@ -881,11 +935,14 @@
                     // Controllo ferreo dell'UID proprietario: se un qualsiasi altro UID tentasse di entrare, viene disconnesso
                     if (ownerVaultConfig.ownerUid && ownerVaultConfig.ownerUid !== user.uid) {
                         await signOut(auth);
+                        revealLoginCard();
                         showAuthGateError('Accesso negato: questo account non coincide con l\'unico UID Proprietario autorizzato.');
                         return;
                     }
 
                     unlockAppForVerifiedOwner(user.email || ownerVaultConfig.ownerEmail, user.uid);
+                } else {
+                    revealLoginCard();
                 }
             } catch (err) {
                 // Se le regole Firestore permettono solo users/{uid}, sblocca usando direttamente il documento utente autenticato
@@ -1046,12 +1103,13 @@
             if (auth) await signOut(auth);
             window.closeSettingsModal();
             document.getElementById('authPasswordInput').value = '';
+            revealLoginCard();
             document.getElementById('authGateOverlay').classList.remove('hidden');
             window.showToast('Sessione proprietario disconnessa e bloccata', 'info');
         };
 
         // ============================================================================
-        // SINCRONIZZAZIONE REALTIME FIRESTORE (CHIAVI API PRIVATE + SCHEDINE SALVATE)
+        // SINCRONIZZAZIONE REALTIME FIRESTORE (CHIAVI API + SCHEDINE + RADDOPPIO DI OGGI)
         // ============================================================================
         function subscribeOwnerFirestoreData(ownerUid) {
             if (!db || !currentUser) return;
@@ -1087,24 +1145,29 @@
             }, (err) => {
                 console.error('Errore lettura schedine Firestore:', err);
             });
+
+            // 3. Ripristino automatico dal Cloud Firestore del Raddoppio generato OGGI (se presente)
+            const todayKey = window.getTodayDateStr();
+            const dailyDocRef = doc(db, 'artifacts', appId, 'users', ownerUid, 'daily_analysis', todayKey);
+            getDoc(dailyDocRef).then((snap) => {
+                if (snap.exists()) {
+                    const cloudState = snap.data();
+                    if (cloudState && cloudState.date === todayKey && cloudState.hasRunAiAnalysis) {
+                        window.restoreDailyAnalysisSnapshot(cloudState);
+                    }
+                }
+            }).catch(() => {});
         }
 
-        // Salvataggio Chiavi API su Firestore
-        window.saveUserApiKey = async function() {
+        // Salva lo stato dell'analisi giornaliera anche su Firestore così persiste tra chiusure e dispositivi
+        window.syncDailyAnalysisToCloud = async function(snapshotPayload) {
             if (!db || !currentUser || !ownerVaultConfig) return;
-            const geminiKey = document.getElementById('userGeminiKeyInput').value.trim();
-            const oddsKey = document.getElementById('userOddsKeyInput').value.trim();
             try {
-                const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'private_settings', 'api_keys');
-                await setDoc(settingsDocRef, {
-                    geminiApiKey: geminiKey,
-                    oddsApiKey: oddsKey,
-                    updatedAt: Date.now()
-                });
-                window.closeSettingsModal();
-                window.showToast('Chiavi salvate nel tuo Cloud Firestore!');
+                const todayKey = window.getTodayDateStr();
+                const dailyDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'daily_analysis', todayKey);
+                await setDoc(dailyDocRef, snapshotPayload);
             } catch (e) {
-                window.showToast('Errore salvataggio Firestore', 'error');
+                // In caso di offline, resta comunque salvato in localStorage
             }
         };
 
@@ -1230,250 +1293,77 @@
 
         window.getCurrentRaddoppioPicks = () => raddoppioPicks;
 
-        const LEAGUES = [
-            { code: 'ita.1', name: 'Serie A', country: 'Italia', flag: 'IT' },
-            { code: 'eng.1', name: 'Premier League', country: 'Inghilterra', flag: 'EN' },
-            { code: 'esp.1', name: 'La Liga', country: 'Spagna', flag: 'ES' },
-            { code: 'ger.1', name: 'Bundesliga', country: 'Germania', flag: 'DE' },
-            { code: 'fra.1', name: 'Ligue 1', country: 'Francia', flag: 'FR' },
-            { code: 'uefa.champions', name: 'Champions League', country: 'Europa', flag: 'EU' },
-            { code: 'uefa.europa', name: 'Europa League', country: 'Europa', flag: 'EU' },
-            { code: 'ita.2', name: 'Serie B', country: 'Italia', flag: 'IT' },
-            { code: 'ned.1', name: 'Eredivisie', country: 'Olanda', flag: 'NL' },
-            { code: 'por.1', name: 'Primeira Liga', country: 'Portogallo', flag: 'PT' }
-        ];
-
-        function getTodayDateStr() {
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
-        }
-
-        function getFallbackCrestDataUri(teamName) {
-            const initials = (teamName || 'FC')
-                .split(' ')
-                .map(w => w[0])
-                .join('')
-                .slice(0, 2)
-                .toUpperCase();
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#242429" stroke="#facc15" stroke-width="3"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#facc15" font-family="Inter, sans-serif" font-weight="800" font-size="22">${initials}</text></svg>`;
-            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-        }
-
         // ============================================================================
-        // NAVIGAZIONE STILE iOS LIQUID GLASS & FISICA TOUCH
+        // PERSISTENZA AUTOMATICA DEL RADDOPPIO GIORNALIERO (LOCALSTORAGE + FIRESTORE)
         // ============================================================================
-        const TAB_ORDER = ['homepage', 'partite', 'salvate'];
-
-        function switchTab(tabName) {
-            if (!TAB_ORDER.includes(tabName)) return;
-            currentActiveTab = tabName;
-
-            TAB_ORDER.forEach((t, idx) => {
-                const sec = document.getElementById(`tab-${t}`);
-                const btn = document.getElementById(`nav-${t}`);
-                if (sec) {
-                    if (t === tabName) {
-                        sec.classList.remove('hidden');
-                    } else {
-                        sec.classList.add('hidden');
-                    }
-                }
-                if (btn) {
-                    if (t === tabName) {
-                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-brand-400 transition-colors duration-300';
-                        const indicator = document.getElementById('navLiquidIndicator');
-                        if (indicator) {
-                            indicator.style.transform = `translateX(${idx * 100}%)`;
-                        }
-                    } else {
-                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-zinc-300/80 hover:text-white transition-colors duration-300';
-                    }
-                }
-            });
+        function getDailyStorageKey() {
+            return `dbet_daily_state_${getTodayDateStr()}`;
         }
 
-        function initLiquidGlassTouchPhysics() {
-            // 1. Trascinamento del dito sulla Navbar flottante iOS
-            const navbar = document.getElementById('iosFloatingNavbar');
-            if (navbar) {
-                let isDraggingNav = false;
-                const handleNavPointer = (clientX) => {
-                    const rect = navbar.getBoundingClientRect();
-                    const relX = Math.max(0, Math.min(rect.width - 1, clientX - rect.left));
-                    const idx = Math.min(2, Math.floor((relX / rect.width) * 3));
-                    const targetTab = TAB_ORDER[idx];
-                    if (targetTab && targetTab !== currentActiveTab) {
-                        switchTab(targetTab);
-                    }
-                };
-                navbar.addEventListener('touchstart', () => { isDraggingNav = true; }, { passive: true });
-                navbar.addEventListener('touchmove', (e) => {
-                    if (!isDraggingNav || !e.touches[0]) return;
-                    handleNavPointer(e.touches[0].clientX);
-                }, { passive: true });
-                navbar.addEventListener('touchend', () => { isDraggingNav = false; }, { passive: true });
-            }
-
-            // 2. Swipe orizzontale sul contenuto principale per cambiare scheda
-            const mainArea = document.getElementById('mainSwipeArea');
-            if (mainArea) {
-                let startX = 0;
-                let startY = 0;
-                mainArea.addEventListener('touchstart', (e) => {
-                    if (!e.touches[0]) return;
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                }, { passive: true });
-
-                mainArea.addEventListener('touchend', (e) => {
-                    if (!e.changedTouches[0]) return;
-                    const dx = e.changedTouches[0].clientX - startX;
-                    const dy = e.changedTouches[0].clientY - startY;
-                    if (Math.abs(dx) > 75 && Math.abs(dx) > Math.abs(dy) * 1.6) {
-                        const curIdx = TAB_ORDER.indexOf(currentActiveTab);
-                        if (dx < 0 && curIdx < TAB_ORDER.length - 1) {
-                            switchTab(TAB_ORDER[curIdx + 1]);
-                        } else if (dx > 0 && curIdx > 0) {
-                            switchTab(TAB_ORDER[curIdx - 1]);
-                        }
-                    }
-                }, { passive: true });
-            }
-
-            // 3. Bottom Sheets trascinabili verso il basso con il dito
-            document.querySelectorAll('.sheet-panel').forEach(panel => {
-                let dragStartY = 0;
-                let currentTranslateY = 0;
-                let draggingSheet = false;
-                const modalId = panel.getAttribute('data-sheet');
-
-                panel.addEventListener('touchstart', (e) => {
-                    if (panel.scrollTop > 4 || !e.touches[0]) return;
-                    dragStartY = e.touches[0].clientY;
-                    draggingSheet = true;
-                    panel.style.transition = 'none';
-                }, { passive: true });
-
-                panel.addEventListener('touchmove', (e) => {
-                    if (!draggingSheet || !e.touches[0]) return;
-                    const deltaY = e.touches[0].clientY - dragStartY;
-                    if (deltaY > 0) {
-                        currentTranslateY = deltaY;
-                        panel.style.transform = `translateY(${deltaY}px)`;
-                    }
-                }, { passive: true });
-
-                panel.addEventListener('touchend', () => {
-                    if (!draggingSheet) return;
-                    draggingSheet = false;
-                    panel.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
-                    if (currentTranslateY > 110 && modalId) {
-                        document.getElementById(modalId).classList.add('hidden');
-                    }
-                    panel.style.transform = 'translateY(0)';
-                    currentTranslateY = 0;
-                }, { passive: true });
-            });
-        }
-
-        // ============================================================================
-        // FASE 1: SCARICO PARTITE REALI DI OGGI + MODELLO DI POISSON A 19 MERCATI
-        // ============================================================================
-        async function fetchDailyMatches() {
-            const todayStr = getTodayDateStr();
-            const espnDate = todayStr.replace(/-/g, '');
-            const fetched = [];
-
-            const requests = LEAGUES.map(async (lg) => {
-                try {
-                    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.code}/scoreboard?dates=${espnDate}`;
-                    const res = await fetch(url);
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    const events = data.events || [];
-                    events.forEach(ev => {
-                        const parsed = parseEspnEvent(ev, lg);
-                        if (parsed) fetched.push(parsed);
-                    });
-                } catch (e) {
-                    // Ignora singolo campionato non raggiungibile
-                }
-            });
-
-            await Promise.all(requests);
-
-            if (fetched.length >= 2) {
-                allMatches = fetched;
-                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Live ESPN API - ${fetched.length} match)`;
-            } else {
-                allMatches = getRealisticFallbackMatches(todayStr);
-                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Palinsesto Europeo integrato)`;
-            }
-
-            debugState.rawEventsCount = allMatches.length;
-            applyMathematicalFilter();
-            buildInitialMathematicalRaddoppio();
-        }
-
-        function parseEspnEvent(ev, lg) {
+        function saveDailyAnalysisState() {
+            if (!hasRunAiAnalysis || !raddoppioPicks || raddoppioPicks.length === 0) return;
+            const snapshot = {
+                date: getTodayDateStr(),
+                savedAt: Date.now(),
+                hasRunAiAnalysis: true,
+                allMatches,
+                raddoppioIds: raddoppioPicks.map(m => String(m.id)),
+                alternativeIds: alternativePicks.map(m => String(m.id)),
+                debugState
+            };
             try {
-                const comp = ev.competitions?.[0];
-                if (!comp) return null;
-                const competitors = comp.competitors || [];
-                const home = competitors.find(c => c.homeAway === 'home') || competitors[0];
-                const away = competitors.find(c => c.homeAway === 'away') || competitors[1];
-                if (!home || !away) return null;
+                localStorage.setItem(getDailyStorageKey(), JSON.stringify(snapshot));
+            } catch (e) {}
+            if (typeof window.syncDailyAnalysisToCloud === 'function') {
+                window.syncDailyAnalysisToCloud(snapshot);
+            }
+        }
 
-                const homeTeam = home.team?.shortDisplayName || home.team?.displayName || 'Casa';
-                const awayTeam = away.team?.shortDisplayName || away.team?.displayName || 'Ospiti';
-                const homeLogo = home.team?.logo || getFallbackCrestDataUri(homeTeam);
-                const awayLogo = away.team?.logo || getFallbackCrestDataUri(awayTeam);
+        window.restoreDailyAnalysisSnapshot = function(snapshot) {
+            if (!snapshot || snapshot.date !== getTodayDateStr() || !snapshot.hasRunAiAnalysis) return false;
+            if (!Array.isArray(snapshot.allMatches) || snapshot.allMatches.length < 2) return false;
 
-                const homeRecord = home.records?.[0]?.summary || '10-5-5';
-                const awayRecord = away.records?.[0]?.summary || '8-6-6';
-                const homeForm = home.form || 'WDWWL';
-                const awayForm = away.form || 'LDWDL';
+            allMatches = snapshot.allMatches;
+            if (snapshot.debugState) {
+                Object.assign(debugState, snapshot.debugState);
+            }
 
-                const homeStrength = computeTeamStrength(homeRecord, true);
-                const awayStrength = computeTeamStrength(awayRecord, false);
+            applyMathematicalFilter();
 
-                const xgHome = +(1.15 + homeStrength * 1.25 - (1 - awayStrength) * 0.25).toFixed(2);
-                const xgAway = +(0.85 + awayStrength * 1.10 - (1 - homeStrength) * 0.20).toFixed(2);
+            const restoredRaddoppio = (snapshot.raddoppioIds || [])
+                .map(id => allMatches.find(m => String(m.id) === String(id)))
+                .filter(Boolean);
 
-                const eventDate = new Date(ev.date);
-                const timeStr = isNaN(eventDate.getTime())
-                    ? '20:45'
-                    : eventDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            if (restoredRaddoppio.length >= 2) {
+                raddoppioPicks = restoredRaddoppio;
+            } else {
+                raddoppioPicks = findOptimalCombination2Or3(filteredMatches.length >= 2 ? filteredMatches : allMatches);
+            }
 
-                const markets = computeExtendedMarketsFromXg(xgHome, xgAway);
+            const restoredAlts = (snapshot.alternativeIds || [])
+                .map(id => allMatches.find(m => String(m.id) === String(id)))
+                .filter(Boolean);
 
-                const matchObj = {
-                    id: String(ev.id || `${lg.code}-${homeTeam}-${awayTeam}`),
-                    league: lg.name,
-                    country: lg.country,
-                    flag: lg.flag,
-                    time: timeStr,
-                    homeTeam,
-                    awayTeam,
-                    homeLogo,
-                    awayLogo,
-                    homeRecord,
-                    awayRecord,
-                    homeForm,
-                    awayForm,
-                    xgHome,
-                    xgAway,
-                    markets,
-                    passingMarkets: []
-                };
+            alternativePicks = restoredAlts.length > 0
+                ? restoredAlts
+                : (filteredMatches.length >= 2 ? filteredMatches : allMatches).filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id)));
 
-                matchObj.bestPick = selectOptimalMarketForRaddoppio(matchObj);
-                return matchObj;
+            hasRunAiAnalysis = true;
+            document.getElementById('aiResultsWrapper').classList.remove('hidden');
+            renderRaddoppioTicket();
+            renderAlternativesList();
+            renderAllMatchesTab();
+            return true;
+        };
+
+        function tryRestoreTodayAnalysisFromLocal() {
+            try {
+                const raw = localStorage.getItem(getDailyStorageKey());
+                if (!raw) return false;
+                const parsed = JSON.parse(raw);
+                return window.restoreDailyAnalysisSnapshot(parsed);
             } catch (e) {
-                return null;
+                return false;
             }
         }
 
@@ -1498,17 +1388,17 @@
         }
 
         // ============================================================================
-        // INIZIALIZZAZIONE AL CARICAMENTO (SOLO DATA DI OGGI + FISICA LIQUID GLASS)
+        // FASE 1: SCARICO PARTITE REALI DI OGGI + MODELLO DI POISSON A 19 MERCATI
         // ============================================================================
-        window.onload = function () {
-            renderSavedHistory();
-            initLiquidGlassTouchPhysics();
-        };
+        async function fetchDailyMatches() {
+            // Se avevamo già eseguito l'analisi AI oggi, ripristina subito il Raddoppio senza perderlo!
+            if (tryRestoreTodayAnalysisFromLocal()) {
+                return;
+            }
 
-        function factorial(n) {
-            let r = 1;
-            for (let i = 2; i <= n; i++) r *= i;
-            return r;
+            const todayStr = getTodayDateStr();
+            const espnDate = todayStr.replace(/-/g, '');
+            const fetched = [];
         }
 
         function poissonProb(k, lambda) {
@@ -1903,6 +1793,7 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
                 renderRaddoppioTicket();
                 renderAlternativesList();
                 renderAllMatchesTab();
+                saveDailyAnalysisState();
                 showToast(`Raddoppio AI (${raddoppioPicks.length} partite) generato!`);
 
             } catch (error) {
@@ -1910,6 +1801,7 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
                 debugState.lastAiStatus = `Fallback Algoritmo Esperto Locale (${error.message || 'API Key non configurata'})`;
                 hasRunAiAnalysis = true;
                 document.getElementById('aiResultsWrapper').classList.remove('hidden');
+                saveDailyAnalysisState();
                 showToast('Raddoppio generato!', 'info');
             } finally {
                 loadingBox.classList.add('hidden');
@@ -2145,6 +2037,7 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
             renderRaddoppioTicket();
             renderAlternativesList();
             renderAllMatchesTab();
+            saveDailyAnalysisState();
         }
 
         function removeFromRaddoppio(matchId) {
@@ -2159,6 +2052,7 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
             renderRaddoppioTicket();
             renderAlternativesList();
             renderAllMatchesTab();
+            saveDailyAnalysisState();
             showToast('Partita rimossa: raddoppio riportato a 2 eventi.');
         }
 
@@ -2421,6 +2315,7 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
             renderAllMatchesTab();
             renderRaddoppioTicket();
             renderAlternativesList();
+            saveDailyAnalysisState();
             showToast(`Impostato ${marketKey} (@${odd.toFixed(2)}) per ${match.homeTeam}!`);
         }
 
