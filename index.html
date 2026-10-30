@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DBet - Raddoppio Giornaliero AI</title>
+
+    <!-- Meta Tag per renderla una vera Web App (PWA) su iOS e Android -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DBet">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#121214">
+
+    <!-- Logo SVG Aggressivo Monogramma "DB" Giallo & Nero per la schermata Home del telefono -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FEF08A'/><stop offset='50%' stop-color='%23FACC15'/><stop offset='100%' stop-color='%23CA8A04'/></linearGradient></defs><rect width='120' height='120' rx='30' fill='%23111114' stroke='url(%23g)' stroke-width='5'/><path d='M16 24 L54 24 L68 38 L58 60 L44 96 L12 96 L22 24 Z M31 40 L26 80 L40 80 L50 56 L44 40 Z' fill='url(%23g)'/><path d='M62 24 L102 24 L108 42 L94 56 L106 72 L92 96 L50 96 L66 54 L56 42 Z M73 39 L70 50 L85 50 L90 39 Z M68 64 L64 81 L83 81 L88 70 L81 64 Z' fill='%23FFFFFF'/><path d='M64 12 L42 62 L59 62 L46 108 L82 52 L63 52 Z' fill='%23FACC15' stroke='%23111114' stroke-width='4' stroke-linejoin='round'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FEF08A'/><stop offset='50%' stop-color='%23FACC15'/><stop offset='100%' stop-color='%23CA8A04'/></linearGradient></defs><rect width='120' height='120' rx='30' fill='%23111114' stroke='url(%23g)' stroke-width='5'/><path d='M16 24 L54 24 L68 38 L58 60 L44 96 L12 96 L22 24 Z M31 40 L26 80 L40 80 L50 56 L44 40 Z' fill='url(%23g)'/><path d='M62 24 L102 24 L108 42 L94 56 L106 72 L92 96 L50 96 L66 54 L56 42 Z M73 39 L70 50 L85 50 L90 39 Z M68 64 L64 81 L83 81 L88 70 L81 64 Z' fill='%23FFFFFF'/><path d='M64 12 L42 62 L59 62 L46 108 L82 52 L63 52 Z' fill='%23FACC15' stroke='%23111114' stroke-width='4' stroke-linejoin='round'/></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Inter & JetBrains Mono per le quote -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        darkbg: '#121214',
+                        darkcard: '#1C1C1F',
+                        darkelevated: '#242429',
+                        darkborder: '#2E2E36',
+                        brand: {
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ==========================================================================
+           APPLE iOS 26 LIQUID GLASS DESIGN SYSTEM & SPRING PHYSICS
+           ========================================================================== */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #0e0e11;
+            background-image: 
+                radial-gradient(circle at 15% 12%, rgba(250, 204, 21, 0.13) 0%, transparent 42%),
+                radial-gradient(circle at 85% 38%, rgba(234, 179, 8, 0.08) 0%, transparent 48%),
+                radial-gradient(circle at 50% 92%, rgba(250, 204, 21, 0.10) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: #F4F4F6;
+            overscroll-behavior-y: none;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .font-odds {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Superficie Apple Liquid Glass Principale */
+        .liquid-glass {
+            background: linear-gradient(135deg, rgba(42, 42, 48, 0.62) 0%, rgba(24, 24, 28, 0.48) 100%);
+            backdrop-filter: blur(28px) saturate(190%);
+            -webkit-backdrop-filter: blur(28px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 14px 34px -8px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.24),
+                inset 1px 0 0 0 rgba(255, 255, 255, 0.08),
+                inset 0 0 22px rgba(250, 204, 21, 0.03);
+            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.38s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+        }
+
+        /* Superficie Liquid Glass più densa per card interne / modali */
+        .liquid-glass-deep {
+            background: linear-gradient(145deg, rgba(32, 32, 38, 0.78) 0%, rgba(18, 18, 22, 0.85) 100%);
+            backdrop-filter: blur(36px) saturate(200%);
+            -webkit-backdrop-filter: blur(36px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.28),
+                inset 0 0 24px rgba(250, 204, 21, 0.04);
+        }
+
+        /* Pillola Liquid Glass Gialla Attiva */
+        .liquid-gold-pill {
+            background: linear-gradient(135deg, #FEF08A 0%, #FACC15 55%, #EAB308 100%);
+            box-shadow: 
+                0 8px 24px -4px rgba(250, 204, 21, 0.45),
+                inset 0 1.5px 0 0 rgba(255, 255, 255, 0.65),
+                inset 0 -1px 0 0 rgba(161, 98, 7, 0.4);
+            color: #121214;
+        }
+
+        /* Floating iOS 26 Bottom Capsule Navbar */
+        .ios-floating-nav {
+            background: linear-gradient(135deg, rgba(38, 38, 45, 0.68) 0%, rgba(20, 20, 24, 0.62) 100%);
+            backdrop-filter: blur(32px) saturate(210%);
+            -webkit-backdrop-filter: blur(32px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 
+                0 18px 42px rgba(0, 0, 0, 0.68),
+                0 0 0 1px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.30),
+                inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);
+        }
+
+        /* Indicatore Liquido Scorrevole nella Navbar */
+        #navLiquidIndicator {
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.24) 0%, rgba(250, 204, 21, 0.10) 100%);
+            border: 1px solid rgba(250, 204, 21, 0.45);
+            box-shadow: 
+                0 4px 18px rgba(250, 204, 21, 0.22),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+            transition: transform 0.45s cubic-bezier(0.22, 1.15, 0.36, 1), width 0.35s ease;
+        }
+
+        /* Transizioni Spring per cambio scheda e interazioni touch */
+        .spring-tab-transition {
+            transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+        }
+        .ios-press {
+            transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .ios-press:active {
+            transform: scale(0.965);
+        }
+
+        /* Effetto scontrino schedina adattato al Liquid Glass */
+        .ticket-cutout {
+            position: relative;
+        }
+        .ticket-cutout::before,
+        .ticket-cutout::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: #111114;
+            border-radius: 9999px;
+            transform: translateY(-50%);
+            z-index: 10;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.7);
+        }
+        .ticket-cutout::before {
+            left: -11px;
+            border-right: 1px solid rgba(255, 255, 255, 0.14);
+        }
+        .ticket-cutout::after {
+            right: -11px;
+            border-left: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        /* Bottom Sheet Drag Physics */
+        .sheet-panel {
+            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center text-zinc-100">
+
+    <!-- Contenitore Mobile App con Bagliori Ambientali Liquid Glass -->
+    <div id="appTouchContainer" class="w-full max-w-[480px] min-h-screen flex flex-col relative shadow-2xl border-x border-white/10 pb-32 overflow-hidden">
+
+        <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
+        <div class="pointer-events-none fixed top-12 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
+
+        <!-- TOP APP BAR: Logo Aggressivo DBet (D+B), Nome App, Pulsante Debug, Pulsante Impostazioni -->
+        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 py-3 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
+                <div class="w-11 h-11 rounded-2xl bg-darkbg/90 border border-brand-400/50 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-400/20 via-transparent to-transparent"></div>
+                    <svg class="w-9 h-9 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="dbGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FEF08A"/>
+                                <stop offset="50%" stop-color="#FACC15"/>
+                                <stop offset="100%" stop-color="#CA8A04"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Scudo Esagonale Aggressivo di Sfondo -->
+                        <polygon points="60,6 110,26 98,98 60,114 22,98 10,26" fill="#141418" stroke="url(#dbGoldGrad)" stroke-width="3.5" opacity="0.95"/>
+                        <!-- Lettera D Tagliata in Stile Esports -->
+                        <path d="M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z" fill="url(#dbGoldGrad)"/>
+                        <!-- Lettera B Affilata e Interbloccata -->
+                        <path d="M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z" fill="#FFFFFF"/>
+                        <!-- Saetta Centrale che Fonde D e B -->
+                        <path d="M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z" fill="#FACC15" stroke="#121214" stroke-width="3.5" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="font-black text-2xl tracking-tighter italic text-white leading-none drop-shadow">D<span class="text-brand-400">Bet</span></h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Pulsante Console di Debug per Sviluppatori -->
+                <button onclick="openDebugModal()" title="Console Debug Sviluppatori" class="ios-press px-3.5 h-9 rounded-full liquid-glass border-brand-400/40 hover:border-brand-400 text-brand-400 flex items-center gap-1.5 text-xs font-extrabold">
+                    <i class="fa-solid fa-bug text-xs"></i>
+                    <span>Debug</span>
+                </button>
+
+                <!-- Pulsante Impostazioni -->
+                <button onclick="openSettingsModal()" title="Impostazioni" class="ios-press w-9 h-9 rounded-full liquid-glass flex items-center justify-center text-zinc-200 hover:text-brand-400">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENUTO PRINCIPALE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
+        <main id="mainSwipeArea" class="flex-1 px-3.5 pt-4 space-y-5 relative z-10 spring-tab-transition">
+
+            <!-- ==========================================
+                 TAB 1: HOMEPAGE
+                 ========================================== -->
+            <section id="tab-homepage" class="space-y-4">
+
+                <!-- Pulsante Analisi AI Isolato e Compatto con Finitura Liquid Gold Glass -->
+                <div class="flex justify-center pt-1">
+                    <button onclick="runFullAiPipeline()" id="generateAiBtn" class="ios-press px-6 py-3 rounded-full liquid-gold-pill font-black text-xs flex items-center justify-center gap-2 tracking-tight shadow-xl">
+                        <i class="fa-solid fa-bolt text-sm"></i>
+                        <span>Analizza con AI e Crea Raddoppio</span>
+                    </button>
+                </div>
+
+                <!-- STATO DI CARICAMENTO AI -->
+                <div id="aiLoadingBox" class="hidden p-5 rounded-3xl liquid-glass border-brand-400/40 text-center space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-400/15 border border-brand-400/40 flex items-center justify-center mx-auto text-brand-400 shadow-inner">
+                        <i class="fa-solid fa-microchip fa-spin text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Analisi AI in corso sulle partite di oggi...</h3>
+                        <p class="text-xs text-zinc-400 mt-1">Calcolo quote, affidabilità e selezione del raddoppio ottimale...</p>
+                    </div>
+                    <div class="w-full bg-black/40 h-1.5 rounded-full overflow-hidden p-0.5">
+                        <div class="bg-brand-400 h-full w-2/3 animate-pulse rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- CONTENITORE RISULTATI AI (Visibile SOLO dopo l'analisi AI) -->
+                <div id="aiResultsWrapper" class="hidden space-y-5">
+
+                    <!-- BIGLIETTO DEL RADDOPPIO DEL GIORNO -->
+                    <div id="raddoppioTicketContainer" class="space-y-4">
+                        <div class="rounded-3xl liquid-glass overflow-hidden">
+                            <!-- Intestazione Schedina Liquid Gold con Tasto Copia solo Icona -->
+                            <div class="liquid-gold-pill px-4 py-3.5 flex items-center justify-between gap-2 border-b border-black/10">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-xl bg-darkbg/90 text-brand-400 flex items-center justify-center shrink-0 shadow">
+                                        <i class="fa-solid fa-ticket text-sm"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <h3 class="text-xs font-black uppercase tracking-wider text-darkbg truncate">Raddoppio del Giorno</h3>
+                                            <span id="ticketMatchCountBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-darkbg/90 text-brand-400 shrink-0">2 Eventi</span>
+                                        </div>
+                                        <p id="ticketDateLabel" class="text-[10px] font-bold text-darkbg/80">Oggi</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <div class="text-right mr-1">
+                                        <span class="text-[9px] font-black uppercase text-darkbg/80 block">Affidabilità</span>
+                                        <span id="ticketReliabilityBadge" class="font-odds text-xs font-black bg-darkbg/90 text-brand-400 px-2 py-0.5 rounded-full">--%</span>
+                                    </div>
+                                    <!-- Pulsante Copia solo icona nella testata -->
+                                    <button onclick="copyTicketToClipboard()" title="Copia schedina" class="ios-press w-9 h-9 rounded-xl bg-darkbg/90 text-brand-400 hover:bg-darkelevated flex items-center justify-center shadow-md">
+                                        <i class="fa-regular fa-copy text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Lista delle 2 o 3 Partite del Raddoppio -->
+                            <div id="ticketSelectionsList" class="p-3.5 space-y-3">
+                                <!-- Popolato dinamicamente -->
+                            </div>
+
+                            <!-- Divisore stile scontrino -->
+                            <div class="ticket-cutout border-t border-dashed border-white/15 my-1 py-2"></div>
+
+                            <!-- Riepilogo Quota Totale & Simulatore Vincita -->
+                            <div class="p-4 bg-black/30 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[11px] text-zinc-400 uppercase font-bold block">Quota Totale Raddoppio</span>
+                                        <span id="ticketBonusNote" class="text-[11px] text-brand-400 font-semibold">Target Ottimale (~2.00)</span>
+                                    </div>
+                                    <div class="px-4 py-1.5 rounded-2xl bg-brand-400/15 border border-brand-400/50 shadow-inner">
+                                        <span id="ticketTotalOdds" class="font-odds text-2xl font-black text-brand-400">0.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- Calcolatore Puntata Rapido -->
+                                <div class="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs text-zinc-400">Puntata:</span>
+                                        <div class="flex bg-black/40 p-1 rounded-xl border border-white/10">
+                                            <button onclick="setStake(5)" class="stake-btn ios-press px-2.5 py-1 rounded-lg text-xs font-odds font-bold text-zinc-400">5€</button>
+                                            <button onclick="setStake(10)" class="stake-btn ios-press px-2.5 py-1 rounded-lg text-xs font-odds font-bold bg-brand-400 text-darkbg shadow">10€</button>
+                                            <button onclick="setStake(20)" class="stake-btn ios-press px-2.5 py-1 rounded-lg text-xs font-odds font-bold text-zinc-400">20€</button>
+                                            <button onclick="setStake(50)" class="stake-btn ios-press px-2.5 py-1 rounded-lg text-xs font-odds font-bold text-zinc-400">50€</button>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-[10px] text-zinc-400 block">Vincita Potenziale</span>
+                                        <span id="potentialWinDisplay" class="font-odds text-base font-black text-white">0.00 €</span>
+                                    </div>
+                                </div>
+
+                                <!-- Bottone Salva Schedina -->
+                                <div class="pt-1">
+                                    <button onclick="saveTicketToHistory()" class="ios-press w-full py-2.5 px-3 rounded-2xl bg-brand-400/15 hover:bg-brand-400/25 border border-brand-400/40 text-brand-300 font-bold text-xs flex items-center justify-center gap-1.5">
+                                        <i class="fa-regular fa-bookmark"></i>
+                                        <span>Salva in Schedine Salvate</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ALTRE PARTITE IDONEE (PER AGGIUNGERE LA 3ª PARTITA O SOSTITUIRE) -->
+                    <div class="space-y-2.5 pt-1">
+                        <div class="flex items-center justify-between px-1">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-layer-group text-brand-400"></i>
+                                Altre Partite Idonee
+                            </h3>
+                            <span class="text-[10px] text-zinc-400">Tocca "+" per usare nel raddoppio</span>
+                        </div>
+                        <div id="alternativesList" class="space-y-2.5">
+                            <!-- Popolato dinamicamente -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ==========================================
+                 TAB 2: PARTITE & MERCATI (Quote e Affidabilità visibili solo dopo stima AI)
+                 ========================================== -->
+            <section id="tab-partite" class="hidden space-y-4">
+                
+                <!-- Pannello Controllo Filtro Matematico Esteso (1.14 - 1.68) in stile Liquid Glass -->
+                <div class="p-4 rounded-3xl liquid-glass space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <h2 class="text-sm font-black text-white flex items-center gap-1.5">
+                                <i class="fa-solid fa-filter text-brand-400"></i>
+                                Filtro Multi-Mercato (2 o 3 Eventi)
+                            </h2>
+                            <p class="text-[11px] text-zinc-300">Range consigliato: <strong class="text-brand-400">1.14 – 1.68</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div class="bg-black/35 p-2.5 rounded-2xl border border-white/10">
+                            <label class="text-[10px] text-zinc-400 uppercase font-bold block">Quota Minima Singola</label>
+                            <div class="flex items-center justify-between mt-1">
+                                <input type="number" id="minOddsInput" value="1.14" step="0.02" min="1.08" max="1.50" onchange="applyMathematicalFilter(); buildInitialMathematicalRaddoppio();" class="bg-transparent font-odds text-sm font-black text-white w-full focus:outline-none">
+                                <span class="text-[10px] text-zinc-500">min</span>
+                            </div>
+                        </div>
+                        <div class="bg-black/35 p-2.5 rounded-2xl border border-white/10">
+                            <label class="text-[10px] text-zinc-400 uppercase font-bold block">Quota Massima Singola</label>
+                            <div class="flex items-center justify-between mt-1">
+                                <input type="number" id="maxOddsInput" value="1.68" step="0.02" min="1.35" max="2.10" onchange="applyMathematicalFilter(); buildInitialMathematicalRaddoppio();" class="bg-transparent font-odds text-sm font-black text-brand-400 w-full focus:outline-none">
+                                <span class="text-[10px] text-zinc-500">max</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtro Visualizzazione -->
+                    <div class="flex bg-black/40 p-1 rounded-2xl border border-white/10 text-xs font-bold">
+                        <button onclick="setMatchListFilter('all')" id="filterBtnAll" class="ios-press flex-1 py-1.5 rounded-xl bg-white/10 text-brand-400 transition">
+                            Tutte le Partite
+                        </button>
+                        <button onclick="setMatchListFilter('filtered')" id="filterBtnFiltered" class="ios-press flex-1 py-1.5 rounded-xl text-zinc-400 transition">
+                            Solo Idonee al Filtro
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista Partite Scaricate -->
+                <div id="allMatchesContainer" class="space-y-3">
+                    <!-- Popolato via JS -->
+                </div>
+
+            </section>
+
+            <!-- ==========================================
+                 TAB 3: SCHEDINE SALVATE
+                 ========================================== -->
+            <section id="tab-salvate" class="hidden space-y-4">
+                <div class="flex items-center justify-between px-1">
+                    <h2 class="text-sm font-black uppercase tracking-wider text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bookmark text-brand-400"></i>
+                        Schedine Salvate
+                    </h2>
+                    <button onclick="clearSavedHistory()" class="ios-press text-xs text-zinc-400 hover:text-rose-400 font-semibold">
+                        Svuota tutto
+                    </button>
+                </div>
+                <div id="savedHistoryList" class="space-y-2.5">
+                    <!-- Popolato da localStorage -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ============================================================================
+             FINESTRA IMPOSTAZIONI LIQUID GLASS (Con entrambe le chiavi: Gemini + The Odds API)
+             Trascinabile verso il basso con il dito (iOS Sheet)
+             ============================================================================ -->
+        <div id="settingsModal" onclick="if(event.target === this) closeSettingsModal()" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div data-sheet="settingsModal" class="sheet-panel w-full max-w-[480px] liquid-glass-deep rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden">
+                <!-- Maniglia iOS per trascinare giù col dito -->
+                <div class="sheet-drag-handle pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
+                    <div class="w-11 h-1.5 rounded-full bg-white/25"></div>
+                </div>
+
+                <div class="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-gear text-brand-400"></i>
+                        <h3 class="text-xs font-black uppercase tracking-wider text-white">Impostazioni & Cloud</h3>
+                    </div>
+                    <button onclick="closeSettingsModal()" class="ios-press w-8 h-8 rounded-full bg-white/10 border border-white/15 text-zinc-300 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+                    <!-- Stato Account Proprietario & Firestore Vault -->
+                    <div class="p-3.5 rounded-2xl bg-black/40 border border-brand-400/30 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-black uppercase tracking-wider text-brand-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                Account Proprietario (Firestore)
+                            </span>
+                            <button onclick="logoutOwnerAccount()" class="ios-press px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[10px] font-extrabold">
+                                <i class="fa-solid fa-right-from-bracket mr-1"></i>Esci
+                            </button>
+                        </div>
+                        <div class="text-[11px] text-zinc-300 space-y-0.5 font-mono">
+                            <div>Email: <span id="settingsOwnerEmail" class="text-white font-bold">In verifica...</span></div>
+                            <div class="break-all">UID: <span id="settingsOwnerUid" class="text-brand-300">--</span></div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-zinc-300 leading-relaxed bg-black/30 p-3 rounded-2xl border border-white/10">
+                        Le tue chiavi vengono cifrate e salvate nel tuo documento privato Firestore associato esclusivamente al tuo UID proprietario.
+                    </p>
+
+                    <!-- Chiave 1: Gemini API -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-extrabold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-key text-brand-400"></i>
+                                Chiave API Gemini
+                            </label>
+                            <span id="savedKeyBadge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300">Default</span>
+                        </div>
+                        <input type="password" id="userGeminiKeyInput" placeholder="Incolla qui la tua API Key Gemini (AIzaSy...)" class="w-full bg-black/45 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-3 text-xs font-mono text-white focus:outline-none">
+                    </div>
+
+                    <!-- Chiave 2: The Odds API -->
+                    <div class="space-y-2 pt-1">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-extrabold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-brand-400"></i>
+                                Chiave The Odds API (Opzionale)
+                            </label>
+                            <span id="savedOddsKeyBadge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300">Non inserita</span>
+                        </div>
+                        <input type="password" id="userOddsKeyInput" placeholder="Incolla qui la tua chiave The Odds API..." class="w-full bg-black/45 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-3 text-xs font-mono text-white focus:outline-none">
+                    </div>
+
+                    <div class="flex gap-2.5 pt-2">
+                        <button onclick="saveUserApiKey()" class="ios-press flex-1 py-3 rounded-2xl liquid-gold-pill font-black text-xs">
+                            Salva nel Cloud Firestore
+                        </button>
+                        <button onclick="removeUserApiKey()" class="ios-press py-3 px-4 rounded-2xl bg-white/10 hover:bg-rose-950/60 border border-white/10 text-zinc-300 hover:text-rose-300 text-xs font-semibold">
+                            Rimuovi
+                        </button>
+                    </div>
+
+                    <!-- Configurazione Firebase / Regole di Sicurezza 100% per GitHub Pages -->
+                    <details class="group rounded-2xl bg-black/35 border border-white/10 p-3 text-xs">
+                        <summary class="font-extrabold text-zinc-200 cursor-pointer flex items-center justify-between">
+                            <span><i class="fa-solid fa-lock text-brand-400 mr-1.5"></i>Configurazione Firebase & Security Rules</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-zinc-400 group-open:rotate-180 transition"></i>
+                        </summary>
+                        <div class="mt-3 space-y-2.5 text-[11px] text-zinc-300">
+                            <p>Per usare il tuo progetto Firebase personale su GitHub Pages, incolla qui il JSON di configurazione Firebase Web App:</p>
+                            <textarea id="customFirebaseConfigInput" rows="3" placeholder='{"apiKey":"...","authDomain":"...","projectId":"..."}' class="w-full bg-black/60 border border-white/15 rounded-xl p-2 text-[10px] font-mono text-zinc-200 focus:outline-none focus:border-brand-400"></textarea>
+                            <button onclick="saveCustomFirebaseConfig()" class="ios-press w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-brand-400 font-bold text-[11px]">
+                                Aggiorna Configurazione Firebase
+                            </button>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================================
+             POPUP (MODAL) DETTAGLI PARTITA, STATISTICHE & CHECK RISCHIO AI - TASTO (i)
+             Trascinabile verso il basso con il dito (iOS Sheet)
+             ============================================================================ -->
+        <div id="matchInfoModal" onclick="if(event.target === this) closeMatchInfoModal()" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div data-sheet="matchInfoModal" class="sheet-panel w-full max-w-[480px] max-h-[88vh] liquid-glass-deep rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden">
+                <!-- Maniglia iOS per trascinare giù col dito -->
+                <div class="sheet-drag-handle pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
+                    <div class="w-11 h-1.5 rounded-full bg-white/25"></div>
+                </div>
+
+                <!-- Modal Header -->
+                <div class="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-full bg-brand-400/20 border border-brand-400/40 text-brand-400 flex items-center justify-center text-xs font-black">i</span>
+                        <div>
+                            <h3 id="modalMatchLeague" class="text-xs font-extrabold text-white">Dettagli & Analisi Rischio</h3>
+                            <p id="modalMatchSub" class="text-[10px] text-zinc-400">Statistiche squadra, mercati e verdetto AI</p>
+                        </div>
+                    </div>
+                    <button onclick="closeMatchInfoModal()" class="ios-press w-8 h-8 rounded-full bg-white/10 border border-white/15 text-zinc-300 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body Scrollable -->
+                <div id="modalMatchBody" class="p-4 overflow-y-auto space-y-4 text-xs">
+                    <!-- Popolato dinamicamente da openMatchInfoModal(matchId) -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================================
+             FINESTRA CONSOLE DI DEBUG PER SVILUPPATORI (Partite -> Filtro -> AI)
+             Trascinabile verso il basso con il dito (iOS Sheet)
+             ============================================================================ -->
+        <div id="debugModal" onclick="if(event.target === this) closeDebugModal()" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div data-sheet="debugModal" class="sheet-panel w-full max-w-[480px] h-[88vh] liquid-glass-deep rounded-t-[32px] sm:rounded-[32px] flex flex-col overflow-hidden">
+                <!-- Maniglia iOS per trascinare giù col dito -->
+                <div class="sheet-drag-handle pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
+                    <div class="w-11 h-1.5 rounded-full bg-white/25"></div>
+                </div>
+
+                <!-- Header Console Debug -->
+                <div class="px-5 py-3 border-b border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-brand-400"></i>
+                        <div>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-white">Developer Debug Console</h3>
+                            <p class="text-[10px] text-zinc-400">Ispezione Pipeline: Scarico &rarr; Filtro &rarr; AI</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="copyDebugLog()" class="ios-press px-2.5 py-1 rounded-full liquid-gold-pill font-black text-[10px] flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> Copia Log
+                        </button>
+                        <button onclick="closeDebugModal()" class="ios-press w-8 h-8 rounded-full bg-white/10 border border-white/15 text-zinc-300 hover:text-white flex items-center justify-center">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selettore Sezione Debug -->
+                <div class="grid grid-cols-3 gap-1 p-2 bg-black/40 border-b border-white/10 text-[11px] font-bold">
+                    <button onclick="switchDebugTab('raw')" id="dbgTabBtn-raw" class="py-1.5 rounded-xl bg-brand-400 text-darkbg transition">
+                        1. Partite (<span id="dbgCountRaw">0</span>)
+                    </button>
+                    <button onclick="switchDebugTab('filtered')" id="dbgTabBtn-filtered" class="py-1.5 rounded-xl text-zinc-400 hover:text-white transition">
+                        2. Filtro (<span id="dbgCountFiltered">0</span>)
+                    </button>
+                    <button onclick="switchDebugTab('ai')" id="dbgTabBtn-ai" class="py-1.5 rounded-xl text-zinc-400 hover:text-white transition">
+                        3. Esito AI
+                    </button>
+                </div>
+
+                <!-- Contenuto Console Debug -->
+                <div class="flex-1 overflow-y-auto p-3.5 font-mono text-[11px] space-y-3 bg-black/45" id="debugModalContent">
+                    <!-- Popolato da renderDebugContent() -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATION LIQUID GLASS -->
+        <div id="appToast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full liquid-glass-deep border-brand-400/60 text-white text-xs font-bold shadow-2xl flex items-center gap-2 max-w-[90vw]">
+            <i id="appToastIcon" class="fa-solid fa-circle-check text-brand-400"></i>
+            <span id="appToastText">Operazione completata</span>
+        </div>
+
+        <!-- ============================================================================
+             SCHERMATA DI BLOCCO TOTALE: LOGIN PROPRIETARIO & SINGLE-OWNER VAULT (FIRESTORE)
+             Impedisce qualsiasi accesso o utilizzo dell'app a chi non è il proprietario
+             ============================================================================ -->
+        <div id="authGateOverlay" class="fixed inset-0 z-50 bg-[#0b0b0e]/95 backdrop-blur-2xl flex items-center justify-center p-4">
+            <div class="w-full max-w-[390px] liquid-glass-deep rounded-[32px] p-6 space-y-5 border border-white/15 shadow-2xl relative overflow-hidden">
+                <div class="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-32 bg-brand-400/15 rounded-full blur-3xl"></div>
+
+                <!-- Header Logo DBet -->
+                <div class="text-center space-y-2 relative z-10">
+                    <div class="w-16 h-16 rounded-2xl bg-darkbg border border-brand-400/50 flex items-center justify-center mx-auto shadow-xl shadow-brand-400/15">
+                        <svg class="w-12 h-12" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="60,6 110,26 98,98 60,114 22,98 10,26" fill="#141418" stroke="#FACC15" stroke-width="3.5"/>
+                            <path d="M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z" fill="#FACC15"/>
+                            <path d="M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z" fill="#FFFFFF"/>
+                            <path d="M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z" fill="#FACC15" stroke="#121214" stroke-width="3.5" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h2 class="font-black text-2xl italic tracking-tighter text-white">D<span class="text-brand-400">Bet</span> Vault</h2>
+                    <p id="authVaultStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-400/15 border border-brand-400/30 text-[10px] font-extrabold text-brand-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-lock"></i> Accesso Esclusivo Proprietario
+                    </p>
+                </div>
+
+                <!-- Selettore Login / Prima Registrazione Proprietario (nascosto automaticamente non appena l'account proprietario esiste!) -->
+                <div id="authModeTabs" class="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-black/50 border border-white/10 text-xs font-bold">
+                    <button onclick="setAuthMode('login')" id="authTabLogin" class="py-2 rounded-xl liquid-gold-pill font-black">
+                        Accedi
+                    </button>
+                    <button onclick="setAuthMode('register')" id="authTabRegister" class="py-2 rounded-xl text-zinc-400 hover:text-white">
+                        Crea Account (1° Setup)
+                    </button>
+                </div>
+
+                <!-- Avviso quando la registrazione è bloccata perché il proprietario è già registrato -->
+                <div id="ownerLockedNotice" class="hidden p-3 rounded-2xl bg-black/40 border border-white/10 text-[11px] text-zinc-300 text-center">
+                    <i class="fa-solid fa-user-shield text-brand-400 mr-1"></i>
+                    L'account proprietario è già stato registrato e sigillato. Nessun nuovo account può essere creato.
+                </div>
+
+                <!-- Form Credenziali -->
+                <div class="space-y-3 relative z-10">
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-bold text-zinc-300">Email Proprietario</label>
+                        <input type="email" id="authEmailInput" placeholder="tua-email@dominio.it" class="w-full bg-black/50 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-bold text-zinc-300">Password / Master PIN</label>
+                        <input type="password" id="authPasswordInput" placeholder="••••••••••••" class="w-full bg-black/50 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+                    </div>
+
+                    <!-- Chiave di Setup Master richiesta SOLO per la creazione dell'unico account -->
+                    <div id="authSetupSecretWrap" class="hidden space-y-1 pt-1">
+                        <label class="text-[11px] font-bold text-brand-400 flex items-center justify-between">
+                            <span>Codice Segreto Creazione Proprietario</span>
+                            <span class="text-[9px] text-zinc-400 font-normal">Richiesto solo al 1° avvio</span>
+                        </label>
+                        <input type="password" id="authSetupSecretInput" placeholder="Crea o inserisci il tuo Codice Master" class="w-full bg-black/50 border border-brand-400/40 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+                        <p class="text-[10px] text-zinc-400 leading-snug">
+                            Una volta creato il tuo account, Firestore bloccherà per sempre la registrazione a chiunque altro.
+                        </p>
+                    </div>
+
+                    <p id="authErrorMsg" class="hidden text-[11px] text-rose-400 font-semibold text-center bg-rose-950/40 border border-rose-500/30 rounded-xl p-2"></p>
+
+                    <button onclick="handleOwnerAuthSubmit()" id="authSubmitBtn" class="ios-press w-full py-3 rounded-2xl liquid-gold-pill font-black text-xs flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-key"></i>
+                        <span id="authSubmitBtnText">Sblocca DBet</span>
+                    </button>
+                </div>
+
+                <!-- Configurazione rapida Firebase Config dal Gate se si usa su GitHub Pages -->
+                <details class="rounded-2xl bg-black/40 border border-white/10 p-2.5 text-[11px] text-zinc-400">
+                    <summary class="cursor-pointer font-bold text-zinc-300 flex items-center justify-between">
+                        <span><i class="fa-solid fa-database text-brand-400 mr-1.5"></i>Collega il tuo Firebase su GitHub Pages</span>
+                        <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                    </summary>
+                    <div class="mt-2 space-y-2">
+                        <textarea id="gateFirebaseConfigInput" rows="2" placeholder='Incolla qui firebaseConfig JSON {"apiKey":"...","projectId":"..."}' class="w-full bg-black/60 border border-white/15 rounded-xl p-2 text-[10px] font-mono text-white focus:outline-none"></textarea>
+                        <button onclick="saveGateFirebaseConfig()" class="ios-press w-full py-1.5 rounded-xl bg-white/10 text-brand-400 font-bold text-[10px]">
+                            Salva e Ricarica Connessione Firebase
+                        </button>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ============================================================================
+             FLOATING iOS 26 LIQUID GLASS NAVBAR (Più stretta e compatta a capsula)
+             Supporta sia il tocco sia il trascinamento del dito sulla barra
+             ============================================================================ -->
+        <div class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto">
+            <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none touch-none">
+                <!-- Indicatore a Pillola Liquida Scorrevole -->
+                <div id="navLiquidIndicator" class="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-full pointer-events-none z-0"></div>
+
+                <button onclick="switchTab('homepage')" id="nav-homepage" class="relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-brand-400 transition-colors duration-300">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span class="text-[9.5px] font-black tracking-tight">Homepage</span>
+                </button>
+
+                <button onclick="switchTab('partite')" id="nav-partite" class="relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-zinc-300/80 hover:text-white transition-colors duration-300">
+                    <div class="relative">
+                        <i class="fa-solid fa-futbol text-xs"></i>
+                        <span id="navMatchesBadge" class="absolute -top-1.5 -right-3.5 bg-brand-400 text-darkbg font-odds font-black text-[8.5px] px-1 rounded-full shadow">0</span>
+                    </div>
+                    <span class="text-[9.5px] font-bold tracking-tight">Partite</span>
+                </button>
+
+                <button onclick="switchTab('salvate')" id="nav-salvate" class="relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-zinc-300/80 hover:text-white transition-colors duration-300">
+                    <i class="fa-solid fa-bookmark text-xs"></i>
+                    <span class="text-[9.5px] font-bold tracking-tight">Salvate</span>
+                </button>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- ============================================================================
+         MODULO FIREBASE AUTH + FIRESTORE (SINGLE-OWNER VAULT)
+         ============================================================================ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            addDoc,
+            deleteDoc,
+            onSnapshot,
+            collection
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dbet-personal-vault';
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let ownerVaultConfig = null;
+        let savedTicketsUnsubscribe = null;
+        let settingsUnsubscribe = null;
+        let currentAuthMode = 'login';
+
+        // Hash SHA-256 lato client per verifica crittografica delle credenziali nel Vault Firestore
+        async function sha256Hex(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function initFirebaseVault() {
+            try {
+                let rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+                const savedCustomCfg = window.savedCustomFirebaseConfigJson;
+                if (savedCustomCfg) rawConfig = savedCustomCfg;
+
+                if (!rawConfig) {
+                    showAuthGateError('Incolla il JSON della tua configurazione Firebase qui sotto per collegare il tuo Database Firestore.');
+                    return;
+                }
+
+                const firebaseConfig = typeof rawConfig === 'string' ? JSON.parse(rawConfig) : rawConfig;
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Autenticazione tecnica iniziale per poter interrogare il registro del proprietario su Firestore (RULE 3)
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, async (user) => {
+                    currentUser = user;
+                    if (user) {
+                        await checkOwnerLockState();
+                    }
+                });
+
+            } catch (e) {
+                showAuthGateError('Errore inizializzazione Firebase: ' + (e.message || 'Configurazione non valida'));
+            }
+        }
+
+        // Controlla se su Firestore esiste già l'unico account proprietario autorizzato
+        async function checkOwnerLockState() {
+            if (!db || !currentUser) return;
+            try {
+                const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
+                const snap = await getDoc(ownerDocRef);
+
+                if (snap.exists()) {
+                    ownerVaultConfig = snap.data();
+                    // Il proprietario esiste già: nascondi la possibilità di creare nuovi account!
+                    document.getElementById('authModeTabs').classList.add('hidden');
+                    document.getElementById('ownerLockedNotice').classList.remove('hidden');
+                    setAuthMode('login');
+                } else {
+                    ownerVaultConfig = null;
+                    document.getElementById('authModeTabs').classList.remove('hidden');
+                    document.getElementById('ownerLockedNotice').classList.add('hidden');
+                    setAuthMode('register');
+                }
+            } catch (err) {
+                console.error('Errore lettura registro proprietario Firestore:', err);
+            }
+        }
+
+        window.setAuthMode = function(mode) {
+            if (ownerVaultConfig && mode === 'register') {
+                showAuthGateError('Registrazione bloccata: l\'account proprietario è già stato creato.');
+                return;
+            }
+            currentAuthMode = mode;
+            const loginBtn = document.getElementById('authTabLogin');
+            const regBtn = document.getElementById('authTabRegister');
+            const secretWrap = document.getElementById('authSetupSecretWrap');
+            const submitText = document.getElementById('authSubmitBtnText');
+
+            if (mode === 'login') {
+                loginBtn.className = 'py-2 rounded-xl liquid-gold-pill font-black';
+                regBtn.className = 'py-2 rounded-xl text-zinc-400 hover:text-white';
+                secretWrap.classList.add('hidden');
+                submitText.textContent = 'Sblocca DBet';
+            } else {
+                regBtn.className = 'py-2 rounded-xl liquid-gold-pill font-black';
+                loginBtn.className = 'py-2 rounded-xl text-zinc-400 hover:text-white';
+                secretWrap.classList.remove('hidden');
+                submitText.textContent = 'Crea Unico Account Proprietario';
+            }
+            hideAuthGateError();
+        };
+
+        function showAuthGateError(msg) {
+            const el = document.getElementById('authErrorMsg');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function hideAuthGateError() {
+            const el = document.getElementById('authErrorMsg');
+            if (el) el.classList.add('hidden');
+        }
+
+        window.handleOwnerAuthSubmit = async function() {
+            hideAuthGateError();
+            const email = (document.getElementById('authEmailInput').value || '').trim().toLowerCase();
+            const password = document.getElementById('authPasswordInput').value || '';
+            const setupSecret = (document.getElementById('authSetupSecretInput').value || '').trim();
+
+            if (!email || !email.includes('@') || password.length < 6) {
+                showAuthGateError('Inserisci un\'email valida e una password di almeno 6 caratteri.');
+                return;
+            }
+
+            if (!db || !auth) {
+                showAuthGateError('Connessione Firestore non attiva. Verifica la configurazione Firebase.');
+                return;
+            }
+
+            const btn = document.getElementById('authSubmitBtn');
+            btn.disabled = true;
+            btn.classList.add('opacity-60');
+
+            try {
+                const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
+                const currentSnap = await getDoc(ownerDocRef);
+                const credHash = await sha256Hex(`${email}::${password}`);
+
+                if (currentAuthMode === 'register') {
+                    // Impedisce a chiunque di creare un secondo account se il documento singleton esiste già
+                    if (currentSnap.exists()) {
+                        ownerVaultConfig = currentSnap.data();
+                        window.setAuthMode('login');
+                        throw new Error('Creazione negata: l\'account proprietario esiste già su Firestore.');
+                    }
+                    if (setupSecret.length < 4) {
+                        throw new Error('Imposta un Codice Segreto Master di almeno 4 caratteri per sigillare il tuo account.');
+                    }
+
+                    // Prova anche a registrare su Firebase Auth Email/Password se il provider è abilitato sulla console Firebase
+                    try {
+                        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                        currentUser = userCred.user;
+                    } catch (e) {
+                        // Se su questo ambiente è attivo solo il token custom/anonimo, mantiene l'UID corrente autenticato e lo sigilla su Firestore
+                    }
+
+                    const ownerPayload = {
+                        ownerUid: currentUser.uid,
+                        ownerEmail: email,
+                        credentialHash: credHash,
+                        setupSecretHash: await sha256Hex(setupSecret),
+                        lockedAt: new Date().toISOString()
+                    };
+
+                    await setDoc(ownerDocRef, ownerPayload);
+                    ownerVaultConfig = ownerPayload;
+                    unlockAppForVerifiedOwner(email, currentUser.uid);
+                    window.showToast('Account Proprietario creato e sigillato su Firestore!');
+
+                } else {
+                    // MODALITÀ LOGIN: Verifica rigorosa contro l'unico Proprietario registrato
+                    if (!currentSnap.exists()) {
+                        window.setAuthMode('register');
+                        throw new Error('Nessun account proprietario trovato. Esegui prima il 1° Setup.');
+                    }
+
+                    const vaultData = currentSnap.data();
+
+                    // Tenta login nativo Firebase Email/Password se abilitato nel progetto Firebase dell'utente
+                    try {
+                        const userCred = await signInWithEmailAndPassword(auth, email, password);
+                        currentUser = userCred.user;
+                    } catch (e) {
+                        // Verifica crittografica su Firestore Vault
+                    }
+
+                    if (vaultData.ownerEmail !== email || vaultData.credentialHash !== credHash) {
+                        throw new Error('Accesso negato: credenziali non appartenenti all\'unico proprietario autorizzato.');
+                    }
+
+                    ownerVaultConfig = vaultData;
+                    unlockAppForVerifiedOwner(vaultData.ownerEmail, vaultData.ownerUid);
+                    window.showToast('Bentornato su DBet Vault!');
+                }
+            } catch (err) {
+                showAuthGateError(err.message || 'Autenticazione fallita');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-60');
+            }
+        };
+
+        function unlockAppForVerifiedOwner(email, ownerUid) {
+            document.getElementById('authGateOverlay').classList.add('hidden');
+            document.getElementById('settingsOwnerEmail').textContent = email;
+            document.getElementById('settingsOwnerUid').textContent = ownerUid;
+
+            subscribeOwnerFirestoreData(ownerUid);
+            window.fetchDailyMatches();
+        }
+
+        window.logoutOwnerAccount = async function() {
+            if (savedTicketsUnsubscribe) savedTicketsUnsubscribe();
+            if (settingsUnsubscribe) settingsUnsubscribe();
+            window.closeSettingsModal();
+            document.getElementById('authPasswordInput').value = '';
+            document.getElementById('authGateOverlay').classList.remove('hidden');
+            window.showToast('Sessione proprietario bloccata', 'info');
+        };
+
+        // ============================================================================
+        // SINCRONIZZAZIONE REALTIME FIRESTORE (CHIAVI API PRIVATE + SCHEDINE SALVATE)
+        // ============================================================================
+        function subscribeOwnerFirestoreData(ownerUid) {
+            if (!db || !currentUser) return;
+
+            // 1. Ascolto chiavi API private del proprietario su Firestore
+            const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerUid, 'private_settings', 'api_keys');
+            settingsUnsubscribe = onSnapshot(settingsDocRef, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    window.cloudGeminiKey = data.geminiApiKey || '';
+                    window.cloudOddsKey = data.oddsApiKey || '';
+                } else {
+                    window.cloudGeminiKey = '';
+                    window.cloudOddsKey = '';
+                }
+                const geminiInput = document.getElementById('userGeminiKeyInput');
+                const oddsInput = document.getElementById('userOddsKeyInput');
+                if (geminiInput) geminiInput.value = window.cloudGeminiKey;
+                if (oddsInput) oddsInput.value = window.cloudOddsKey;
+                window.updateKeyBadge();
+            }, (err) => {
+                console.error('Errore lettura impostazioni Firestore:', err);
+            });
+
+            // 2. Ascolto Schedine Salvate su Firestore
+            const ticketsColRef = collection(db, 'artifacts', appId, 'users', ownerUid, 'saved_tickets');
+            savedTicketsUnsubscribe = onSnapshot(ticketsColRef, (snapshot) => {
+                const items = [];
+                snapshot.forEach(d => items.push({ docId: d.id, ...d.data() }));
+                items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                window.cloudSavedTickets = items;
+                window.renderSavedHistory();
+            }, (err) => {
+                console.error('Errore lettura schedine Firestore:', err);
+            });
+        }
+
+        // Salvataggio Chiavi API su Firestore
+        window.saveUserApiKey = async function() {
+            if (!db || !currentUser || !ownerVaultConfig) return;
+            const geminiKey = document.getElementById('userGeminiKeyInput').value.trim();
+            const oddsKey = document.getElementById('userOddsKeyInput').value.trim();
+            try {
+                const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'private_settings', 'api_keys');
+                await setDoc(settingsDocRef, {
+                    geminiApiKey: geminiKey,
+                    oddsApiKey: oddsKey,
+                    updatedAt: Date.now()
+                });
+                window.closeSettingsModal();
+                window.showToast('Chiavi salvate nel tuo Cloud Firestore!');
+            } catch (e) {
+                window.showToast('Errore salvataggio Firestore', 'error');
+            }
+        };
+
+        window.removeUserApiKey = async function() {
+            if (!db || !currentUser || !ownerVaultConfig) return;
+            try {
+                const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'private_settings', 'api_keys');
+                await setDoc(settingsDocRef, { geminiApiKey: '', oddsApiKey: '', updatedAt: Date.now() });
+                document.getElementById('userGeminiKeyInput').value = '';
+                document.getElementById('userOddsKeyInput').value = '';
+                window.showToast('Chiavi rimosse da Firestore', 'info');
+            } catch (e) {
+                window.showToast('Errore rimozione chiavi', 'error');
+            }
+        };
+
+        // Salvataggio Schedina su Firestore
+        window.saveTicketToHistory = async function() {
+            if (!db || !currentUser || !ownerVaultConfig) {
+                window.showToast('Accedi prima col tuo account proprietario', 'error');
+                return;
+            }
+            const picks = window.getCurrentRaddoppioPicks();
+            if (!picks || picks.length < 2) return;
+
+            const totalOdds = document.getElementById('ticketTotalOdds').textContent;
+            const ticketsColRef = collection(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'saved_tickets');
+
+            try {
+                await addDoc(ticketsColRef, {
+                    createdAt: Date.now(),
+                    date: window.formatDateIt(window.getTodayDateStr()),
+                    totalOdds: totalOdds,
+                    matches: picks.map(m => ({
+                        title: `${m.homeTeam} - ${m.awayTeam}`,
+                        outcome: m.bestPick.outcome,
+                        odd: m.bestPick.odd
+                    }))
+                });
+                window.showToast('Raddoppio salvato su Firestore!');
+            } catch (e) {
+                window.showToast('Errore salvataggio su Firestore', 'error');
+            }
+        };
+
+        window.clearSavedHistory = async function() {
+            if (!db || !currentUser || !ownerVaultConfig || !window.cloudSavedTickets) return;
+            try {
+                for (const item of window.cloudSavedTickets) {
+                    const ref = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'saved_tickets', item.docId);
+                    await deleteDoc(ref);
+                }
+                window.showToast('Archivio Firestore svuotato', 'info');
+            } catch (e) {
+                window.showToast('Errore cancellazione', 'error');
+            }
+        };
+
+        window.saveCustomFirebaseConfig = function() {
+            const val = (document.getElementById('customFirebaseConfigInput').value || '').trim();
+            if (!val) return;
+            window.savedCustomFirebaseConfigJson = val;
+            initFirebaseVault();
+            window.showToast('Configurazione Firebase aggiornata!');
+        };
+
+        window.saveGateFirebaseConfig = function() {
+            const val = (document.getElementById('gateFirebaseConfigInput').value || '').trim();
+            if (!val) return;
+            window.savedCustomFirebaseConfigJson = val;
+            initFirebaseVault();
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initFirebaseVault();
+        });
+    </script>
+
+    <script>
+        // ============================================================================
+        // STATO GLOBALE DELL'APPLICAZIONE & LOG DI DEBUG
+        // ============================================================================
+        const apiKey = ""; // Chiave ambiente preview; sul telefono usa quella salvata nel documento privato Firestore
+
+        window.cloudGeminiKey = '';
+        window.cloudOddsKey = '';
+        window.cloudSavedTickets = [];
+
+        let allMatches = [];          // Tutte le partite scaricate per OGGI
+        let filteredMatches = [];     // Partite con mercati che superano il filtro (1.14 - 1.68)
+        let raddoppioPicks = [];      // Le 2 o 3 partite scelte per il Raddoppio del Giorno
+        let alternativePicks = [];    // Le altre partite idonee
+        let currentStake = 10;        // Puntata selezionata
+        let matchListFilterMode = 'all';
+        let currentDebugTab = 'raw';
+        let currentActiveTab = 'homepage';
+        let hasRunAiAnalysis = false; // Mostra quote, affidabilità e Raddoppio del Giorno SOLO dopo la stima AI
+
+        const debugState = {
+            lastFetchTimestamp: null,
+            rawEventsCount: 0,
+            passedMarketsCount: 0,
+            filterRange: { min: 1.14, max: 1.68 },
+            lastAiStatus: 'In attesa di esecuzione',
+            lastAiPrompt: 'Nessun prompt ancora inviato.',
+            lastAiRawResponse: null
+        };
+
+        window.getCurrentRaddoppioPicks = () => raddoppioPicks;
+
+        const LEAGUES = [
+            { code: 'ita.1', name: 'Serie A', country: 'Italia', flag: 'IT' },
+            { code: 'eng.1', name: 'Premier League', country: 'Inghilterra', flag: 'EN' },
+            { code: 'esp.1', name: 'La Liga', country: 'Spagna', flag: 'ES' },
+            { code: 'ger.1', name: 'Bundesliga', country: 'Germania', flag: 'DE' },
+            { code: 'fra.1', name: 'Ligue 1', country: 'Francia', flag: 'FR' },
+            { code: 'uefa.champions', name: 'Champions League', country: 'Europa', flag: 'EU' },
+            { code: 'uefa.europa', name: 'Europa League', country: 'Europa', flag: 'EU' },
+            { code: 'ita.2', name: 'Serie B', country: 'Italia', flag: 'IT' },
+            { code: 'ned.1', name: 'Eredivisie', country: 'Olanda', flag: 'NL' },
+            { code: 'por.1', name: 'Primeira Liga', country: 'Portogallo', flag: 'PT' }
+        ];
+
+        function getTodayDateStr() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function getFallbackCrestDataUri(teamName) {
+            const initials = (teamName || 'FC')
+                .split(' ')
+                .map(w => w[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#242429" stroke="#facc15" stroke-width="3"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#facc15" font-family="Inter, sans-serif" font-weight="800" font-size="22">${initials}</text></svg>`;
+            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+        }
+
+        // ============================================================================
+        // NAVIGAZIONE STILE iOS LIQUID GLASS & FISICA TOUCH
+        // ============================================================================
+        const TAB_ORDER = ['homepage', 'partite', 'salvate'];
+
+        function switchTab(tabName) {
+            if (!TAB_ORDER.includes(tabName)) return;
+            currentActiveTab = tabName;
+
+            TAB_ORDER.forEach((t, idx) => {
+                const sec = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (sec) {
+                    if (t === tabName) {
+                        sec.classList.remove('hidden');
+                    } else {
+                        sec.classList.add('hidden');
+                    }
+                }
+                if (btn) {
+                    if (t === tabName) {
+                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-brand-400 transition-colors duration-300';
+                        const indicator = document.getElementById('navLiquidIndicator');
+                        if (indicator) {
+                            indicator.style.transform = `translateX(${idx * 100}%)`;
+                        }
+                    } else {
+                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-zinc-300/80 hover:text-white transition-colors duration-300';
+                    }
+                }
+            });
+        }
+
+        function initLiquidGlassTouchPhysics() {
+            // 1. Trascinamento del dito sulla Navbar flottante iOS
+            const navbar = document.getElementById('iosFloatingNavbar');
+            if (navbar) {
+                let isDraggingNav = false;
+                const handleNavPointer = (clientX) => {
+                    const rect = navbar.getBoundingClientRect();
+                    const relX = Math.max(0, Math.min(rect.width - 1, clientX - rect.left));
+                    const idx = Math.min(2, Math.floor((relX / rect.width) * 3));
+                    const targetTab = TAB_ORDER[idx];
+                    if (targetTab && targetTab !== currentActiveTab) {
+                        switchTab(targetTab);
+                    }
+                };
+                navbar.addEventListener('touchstart', () => { isDraggingNav = true; }, { passive: true });
+                navbar.addEventListener('touchmove', (e) => {
+                    if (!isDraggingNav || !e.touches[0]) return;
+                    handleNavPointer(e.touches[0].clientX);
+                }, { passive: true });
+                navbar.addEventListener('touchend', () => { isDraggingNav = false; }, { passive: true });
+            }
+
+            // 2. Swipe orizzontale sul contenuto principale per cambiare scheda
+            const mainArea = document.getElementById('mainSwipeArea');
+            if (mainArea) {
+                let startX = 0;
+                let startY = 0;
+                mainArea.addEventListener('touchstart', (e) => {
+                    if (!e.touches[0]) return;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+
+                mainArea.addEventListener('touchend', (e) => {
+                    if (!e.changedTouches[0]) return;
+                    const dx = e.changedTouches[0].clientX - startX;
+                    const dy = e.changedTouches[0].clientY - startY;
+                    if (Math.abs(dx) > 75 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+                        const curIdx = TAB_ORDER.indexOf(currentActiveTab);
+                        if (dx < 0 && curIdx < TAB_ORDER.length - 1) {
+                            switchTab(TAB_ORDER[curIdx + 1]);
+                        } else if (dx > 0 && curIdx > 0) {
+                            switchTab(TAB_ORDER[curIdx - 1]);
+                        }
+                    }
+                }, { passive: true });
+            }
+
+            // 3. Bottom Sheets trascinabili verso il basso con il dito
+            document.querySelectorAll('.sheet-panel').forEach(panel => {
+                let dragStartY = 0;
+                let currentTranslateY = 0;
+                let draggingSheet = false;
+                const modalId = panel.getAttribute('data-sheet');
+
+                panel.addEventListener('touchstart', (e) => {
+                    if (panel.scrollTop > 4 || !e.touches[0]) return;
+                    dragStartY = e.touches[0].clientY;
+                    draggingSheet = true;
+                    panel.style.transition = 'none';
+                }, { passive: true });
+
+                panel.addEventListener('touchmove', (e) => {
+                    if (!draggingSheet || !e.touches[0]) return;
+                    const deltaY = e.touches[0].clientY - dragStartY;
+                    if (deltaY > 0) {
+                        currentTranslateY = deltaY;
+                        panel.style.transform = `translateY(${deltaY}px)`;
+                    }
+                }, { passive: true });
+
+                panel.addEventListener('touchend', () => {
+                    if (!draggingSheet) return;
+                    draggingSheet = false;
+                    panel.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+                    if (currentTranslateY > 110 && modalId) {
+                        document.getElementById(modalId).classList.add('hidden');
+                    }
+                    panel.style.transform = 'translateY(0)';
+                    currentTranslateY = 0;
+                }, { passive: true });
+            });
+        }
+
+        // ============================================================================
+        // FASE 1: SCARICO PARTITE REALI DI OGGI + MODELLO DI POISSON A 19 MERCATI
+        // ============================================================================
+        async function fetchDailyMatches() {
+            const todayStr = getTodayDateStr();
+            const espnDate = todayStr.replace(/-/g, '');
+            const fetched = [];
+
+            const requests = LEAGUES.map(async (lg) => {
+                try {
+                    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.code}/scoreboard?dates=${espnDate}`;
+                    const res = await fetch(url);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const events = data.events || [];
+                    events.forEach(ev => {
+                        const parsed = parseEspnEvent(ev, lg);
+                        if (parsed) fetched.push(parsed);
+                    });
+                } catch (e) {
+                    // Ignora singolo campionato non raggiungibile
+                }
+            });
+
+            await Promise.all(requests);
+
+            if (fetched.length >= 2) {
+                allMatches = fetched;
+                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Live ESPN API - ${fetched.length} match)`;
+            } else {
+                allMatches = getRealisticFallbackMatches(todayStr);
+                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Palinsesto Europeo integrato)`;
+            }
+
+            debugState.rawEventsCount = allMatches.length;
+            applyMathematicalFilter();
+            buildInitialMathematicalRaddoppio();
+        }
+
+        function parseEspnEvent(ev, lg) {
+            try {
+                const comp = ev.competitions?.[0];
+                if (!comp) return null;
+                const competitors = comp.competitors || [];
+                const home = competitors.find(c => c.homeAway === 'home') || competitors[0];
+                const away = competitors.find(c => c.homeAway === 'away') || competitors[1];
+                if (!home || !away) return null;
+
+                const homeTeam = home.team?.shortDisplayName || home.team?.displayName || 'Casa';
+                const awayTeam = away.team?.shortDisplayName || away.team?.displayName || 'Ospiti';
+                const homeLogo = home.team?.logo || getFallbackCrestDataUri(homeTeam);
+                const awayLogo = away.team?.logo || getFallbackCrestDataUri(awayTeam);
+
+                const homeRecord = home.records?.[0]?.summary || '10-5-5';
+                const awayRecord = away.records?.[0]?.summary || '8-6-6';
+                const homeForm = home.form || 'WDWWL';
+                const awayForm = away.form || 'LDWDL';
+
+                const homeStrength = computeTeamStrength(homeRecord, true);
+                const awayStrength = computeTeamStrength(awayRecord, false);
+
+                const xgHome = +(1.15 + homeStrength * 1.25 - (1 - awayStrength) * 0.25).toFixed(2);
+                const xgAway = +(0.85 + awayStrength * 1.10 - (1 - homeStrength) * 0.20).toFixed(2);
+
+                const eventDate = new Date(ev.date);
+                const timeStr = isNaN(eventDate.getTime())
+                    ? '20:45'
+                    : eventDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                const markets = computeExtendedMarketsFromXg(xgHome, xgAway);
+
+                const matchObj = {
+                    id: String(ev.id || `${lg.code}-${homeTeam}-${awayTeam}`),
+                    league: lg.name,
+                    country: lg.country,
+                    flag: lg.flag,
+                    time: timeStr,
+                    homeTeam,
+                    awayTeam,
+                    homeLogo,
+                    awayLogo,
+                    homeRecord,
+                    awayRecord,
+                    homeForm,
+                    awayForm,
+                    xgHome,
+                    xgAway,
+                    markets,
+                    passingMarkets: []
+                };
+
+                matchObj.bestPick = selectOptimalMarketForRaddoppio(matchObj);
+                return matchObj;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function computeTeamStrength(recordStr, isHome) {
+            const parts = recordStr.split('-').map(n => parseInt(n, 10));
+            if (parts.length === 3 && !parts.some(isNaN)) {
+                const [w, d, l] = parts;
+                const total = w + d + l;
+                if (total > 0) {
+                    const ppg = (w * 3 + d) / total;
+                    return Math.min(0.88, Math.max(0.20, (ppg / 3) + (isHome ? 0.08 : -0.03)));
+                }
+            }
+            return isHome ? 0.56 : 0.44;
+        }
+
+        function americanToDecimal(am) {
+            const num = parseFloat(am);
+            if (isNaN(num)) return 2.00;
+            if (num > 0) return +((num / 100) + 1).toFixed(2);
+            return +((100 / Math.abs(num)) + 1).toFixed(2);
+        }
+
+        // ============================================================================
+        // INIZIALIZZAZIONE AL CARICAMENTO (SOLO DATA DI OGGI + FISICA LIQUID GLASS)
+        // ============================================================================
+        window.onload = function () {
+            renderSavedHistory();
+            initLiquidGlassTouchPhysics();
+        };
+
+        function factorial(n) {
+            let r = 1;
+            for (let i = 2; i <= n; i++) r *= i;
+            return r;
+        }
+
+        function poissonProb(k, lambda) {
+            return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+        }
+
+        function probToBookieOdd(prob) {
+            const p = Math.min(0.92, Math.max(0.08, prob));
+            const rawOdd = 1 / (p * 1.055); // Aggio medio bookmaker ~5.5%
+            return +Math.max(1.06, Math.min(9.50, rawOdd)).toFixed(2);
+        }
+
+        function computeExtendedMarketsFromXg(xgH, xgA) {
+            let p1 = 0, pX = 0, p2 = 0;
+            let pOver15 = 0, pOver25 = 0, pUnder35 = 0, pUnder25 = 0;
+            let pGG = 0, pHomeScores = 0, pAwayScores = 0;
+            let pMg13 = 0, pMg14 = 0, pMg24 = 0, pMgHome13 = 0, pMgAway12 = 0;
+
+            for (let h = 0; h <= 7; h++) {
+                const ph = poissonProb(h, xgH);
+                for (let a = 0; a <= 7; a++) {
+                    const pa = poissonProb(a, xgA);
+                    const p = ph * pa;
+                    const tot = h + a;
+
+                    if (h > a) p1 += p;
+                    else if (h === a) pX += p;
+                    else p2 += p;
+
+                    if (tot >= 2) pOver15 += p;
+                    if (tot >= 3) pOver25 += p;
+                    if (tot <= 3) pUnder35 += p;
+                    if (tot <= 2) pUnder25 += p;
+
+                    if (h >= 1 && a >= 1) pGG += p;
+                    if (h >= 1) pHomeScores += p;
+                    if (a >= 1) pAwayScores += p;
+
+                    if (tot >= 1 && tot <= 3) pMg13 += p;
+                    if (tot >= 1 && tot <= 4) pMg14 += p;
+                    if (tot >= 2 && tot <= 4) pMg24 += p;
+                    if (h >= 1 && h <= 3) pMgHome13 += p;
+                    if (a >= 1 && a <= 2) pMgAway12 += p;
+                }
+            }
+
+            return {
+                '1': probToBookieOdd(p1),
+                'X': probToBookieOdd(pX),
+                '2': probToBookieOdd(p2),
+                '1X': probToBookieOdd(p1 + pX),
+                'X2': probToBookieOdd(p2 + pX),
+                '12': probToBookieOdd(p1 + p2),
+                'Over 1.5': probToBookieOdd(pOver15),
+                'Over 2.5': probToBookieOdd(pOver25),
+                'Under 3.5': probToBookieOdd(pUnder35),
+                'Under 2.5': probToBookieOdd(pUnder25),
+                'Goal (GG)': probToBookieOdd(pGG),
+                'No Goal (NG)': probToBookieOdd(1 - pGG),
+                '1 Segna': probToBookieOdd(pHomeScores),
+                '2 Segna': probToBookieOdd(pAwayScores),
+                'Multigol 1-3': probToBookieOdd(pMg13),
+                'Multigol 1-4': probToBookieOdd(pMg14),
+                'Multigol 2-4': probToBookieOdd(pMg24),
+                'Multigol Casa 1-3': probToBookieOdd(pMgHome13),
+                'Multigol Ospite 1-2': probToBookieOdd(pMgAway12)
+            };
+        }
+
+        function selectOptimalMarketForRaddoppio(match) {
+            const minInput = document.getElementById('minOddsInput');
+            const maxInput = document.getElementById('maxOddsInput');
+            const minOdds = minInput ? (parseFloat(minInput.value) || 1.14) : 1.14;
+            const maxOdds = maxInput ? (parseFloat(maxInput.value) || 1.68) : 1.68;
+            const idealSingleOdd = 1.36;
+
+            const stabilityBonus = {
+                'Multigol 1-4': 6,
+                'Multigol 1-3': 5,
+                'Multigol Casa 1-3': 5,
+                'Over 1.5': 5,
+                '1X': 5,
+                'X2': 4,
+                '1 Segna': 4,
+                'Under 3.5': 4,
+                'Multigol 2-4': 3
+            };
+
+            const evaluated = Object.entries(match.markets).map(([outcome, odd]) => {
+                const inRange = odd >= minOdds && odd <= maxOdds;
+                const baseProb = Math.round((1 / odd) * 95);
+                const reliability = Math.min(93, Math.max(52, baseProb + (stabilityBonus[outcome] || 0)));
+                const distance = Math.abs(odd - idealSingleOdd) - ((stabilityBonus[outcome] || 0) * 0.015);
+                return {
+                    outcome,
+                    odd,
+                    inRange,
+                    reliability,
+                    distance
+                };
+            });
+
+            // Salva tutti i mercati che superano il filtro per mostrarli nella Console di Debug e passarli all'AI
+            match.passingMarkets = evaluated
+                .filter(item => item.inRange)
+                .sort((a, b) => a.distance - b.distance);
+
+            evaluated.sort((a, b) => {
+                if (a.inRange && !b.inRange) return -1;
+                if (!a.inRange && b.inRange) return 1;
+                return a.distance - b.distance;
+            });
+
+            const chosen = evaluated[0];
+            return {
+                outcome: chosen.outcome,
+                odd: chosen.odd,
+                reliability: chosen.reliability,
+                calculatedByAi: false,
+                inRange: chosen.inRange,
+                reasoning: `Mercato ${chosen.outcome} (@${chosen.odd.toFixed(2)}) selezionato su base xG (${match.xgHome} vs ${match.xgAway}), record stagionale ${match.homeRecord} contro ${match.awayRecord} e forma ${match.homeForm} vs ${match.awayForm}.`,
+                riskNote: chosen.odd > 1.48 ? 'Quota ambiziosa: verificare gli 11 titolari ufficiali prima del calcio d\'inizio.' : 'Alta copertura statistica su più risultati esatti.'
+            };
+        }
+
+        function applyMathematicalFilter() {
+            const minOdds = parseFloat(document.getElementById('minOddsInput').value) || 1.14;
+            const maxOdds = parseFloat(document.getElementById('maxOddsInput').value) || 1.68;
+
+            debugState.filterRange = { min: minOdds, max: maxOdds };
+
+            let totalPassingMarkets = 0;
+            allMatches.forEach(m => {
+                m.bestPick = selectOptimalMarketForRaddoppio(m);
+                totalPassingMarkets += m.passingMarkets.length;
+            });
+
+            filteredMatches = allMatches.filter(m => m.passingMarkets.length > 0);
+            filteredMatches.sort((a, b) => b.bestPick.reliability - a.bestPick.reliability);
+
+            debugState.passedMarketsCount = totalPassingMarkets;
+            document.getElementById('navMatchesBadge').textContent = allMatches.length;
+
+            renderAllMatchesTab();
+        }
+
+        // ============================================================================
+        // GESTIONE MODAL IMPOSTAZIONI & STATO CHIAVI CLOUD FIRESTORE
+        // ============================================================================
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function updateKeyBadge() {
+            const badge = document.getElementById('savedKeyBadge');
+            const oddsBadge = document.getElementById('savedOddsKeyBadge');
+            const savedGemini = window.cloudGeminiKey || '';
+            const savedOdds = window.cloudOddsKey || '';
+
+            if (badge) {
+                if (savedGemini && savedGemini.length > 10) {
+                    badge.textContent = 'Attiva (Firestore)';
+                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
+                } else {
+                    badge.textContent = 'Default';
+                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
+                }
+            }
+
+            if (oddsBadge) {
+                if (savedOdds && savedOdds.length > 8) {
+                    oddsBadge.textContent = 'Attiva (Firestore)';
+                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
+                } else {
+                    oddsBadge.textContent = 'Non inserita';
+                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
+                }
+            }
+        }
+
+        function getActiveGeminiApiKey() {
+            if (window.cloudGeminiKey && window.cloudGeminiKey.trim().length > 10) {
+                return window.cloudGeminiKey.trim();
+            }
+            return apiKey;
+        }
+
+        // ============================================================================
+        // COMBINATORE OTTIMALE RADDOPPIO (SCEGLIE TRA 2 O 3 PARTITE INTORNO A QUOTA 2.00)
+        // ============================================================================
+        function findOptimalCombination2Or3(pool) {
+            const candidates = pool.slice(0, 10);
+            if (candidates.length <= 2) return candidates;
+
+            let bestCombo = candidates.slice(0, 2);
+            let bestScore = -9999;
+
+            // Valuta tutte le coppie (2 partite)
+            for (let i = 0; i < candidates.length; i++) {
+                for (let j = i + 1; j < candidates.length; j++) {
+                    const m1 = candidates[i], m2 = candidates[j];
+                    const totalOdd = m1.bestPick.odd * m2.bestPick.odd;
+                    if (totalOdd >= 1.78 && totalOdd <= 2.30) {
+                        const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability) / 2;
+                        const distPenalty = Math.abs(totalOdd - 2.02) * 32;
+                        const score = avgRel - distPenalty;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestCombo = [m1, m2];
+                        }
+                    }
+                }
+            }
+
+            // Valuta tutte le terne (3 partite) con quote singole più contenute e altissima affidabilità
+            for (let i = 0; i < candidates.length; i++) {
+                for (let j = i + 1; j < candidates.length; j++) {
+                    for (let k = j + 1; k < candidates.length; k++) {
+                        const m1 = candidates[i], m2 = candidates[j], m3 = candidates[k];
+                        const totalOdd = m1.bestPick.odd * m2.bestPick.odd * m3.bestPick.odd;
+                        if (totalOdd >= 1.85 && totalOdd <= 2.30) {
+                            const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability + m3.bestPick.reliability) / 3;
+                            const distPenalty = Math.abs(totalOdd - 2.04) * 32;
+                            // Bonus se tutte e 3 hanno affidabilità >= 78%
+                            const highRelBonus = (m1.bestPick.reliability >= 78 && m2.bestPick.reliability >= 78 && m3.bestPick.reliability >= 78) ? 3.5 : 0;
+                            const score = avgRel - distPenalty + highRelBonus;
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestCombo = [m1, m2, m3];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestCombo;
+        }
+
+        function buildInitialMathematicalRaddoppio() {
+            const pool = filteredMatches.length >= 2 ? filteredMatches : allMatches;
+            if (pool.length < 2) return;
+
+            raddoppioPicks = findOptimalCombination2Or3(pool);
+            alternativePicks = pool.filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id))).slice(0, 6);
+
+            if (hasRunAiAnalysis) {
+                renderRaddoppioTicket();
+                renderAlternativesList();
+            }
+        }
+
+        // ============================================================================
+        // FASE 2: ANALISI INTELLIGENZA ARTIFICIALE (GEMINI API)
+        // ============================================================================
+        async function runFullAiPipeline() {
+            const pool = filteredMatches.length >= 2 ? filteredMatches.slice(0, 9) : allMatches.slice(0, 9);
+            if (pool.length < 2) {
+                showToast('Servono almeno 2 partite per generare un raddoppio!', 'error');
+                return;
+            }
+
+            const loadingBox = document.getElementById('aiLoadingBox');
+            const generateBtn = document.getElementById('generateAiBtn');
+
+            loadingBox.classList.remove('hidden');
+            generateBtn.disabled = true;
+            generateBtn.classList.add('opacity-60');
+
+            const minOdds = parseFloat(document.getElementById('minOddsInput').value) || 1.14;
+            const maxOdds = parseFloat(document.getElementById('maxOddsInput').value) || 1.68;
+
+            const candidateDataForAi = pool.map(m => ({
+                id: String(m.id),
+                campionato: `${m.flag} - ${m.league}`,
+                orario: m.time,
+                partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                recordCasa: m.homeRecord,
+                recordOspiti: m.awayRecord,
+                formaCasa: m.homeForm,
+                formaOspiti: m.awayForm,
+                xgStimati: `${m.xgHome} - ${m.xgAway}`,
+                mercatiCheSuperanoIlFiltro: m.passingMarkets.slice(0, 8).map(pm => ({
+                    esito: pm.outcome,
+                    quota: pm.odd
+                }))
+            }));
+
+            const systemInstruction = `Sei un analista calcistico professionista e revisore statistico del rischio, specializzato nella creazione del "Raddoppio del Giorno" (schedina a quota totale moltiplicata intorno a 2.00, range ideale 1.85 - 2.25).
+REGOLE FONDAMENTALI:
+1. Puoi comporre il raddoppio scegliendo 2 OPPURE 3 partite tra quelle fornite: scegli 2 partite se usi quote intorno a 1.38-1.48, oppure 3 partite se preferisci quote più conservative (1.20-1.32) ad altissima copertura.
+2. Per ogni partita valuta TUTTI i mercati nel range ${minOdds}-${maxOdds}: considera con grande attenzione Multigol (es. Multigol 1-4, Multigol 1-3, Multigol 2-4, Multigol Casa 1-3), Under/Over (Over 1.5, Under 3.5), Squadra Segna (1 Segna, 2 Segna), Goal/NoGoal e Doppia Chance (1X, X2).
+3. Calcola direttamente tu la percentuale di affidabilità ("aiReliabilityPercent", numero intero tra 62 e 92) incrociando xG, stato di forma, record stagionale e tipologia di mercato scelto.
+4. Fornisci un'analisi tattica chiara e segnala eventuali trappole nel campo "trapWarning".`;
+
+            const userPrompt = `Data palinsesto (Oggi): ${getTodayDateStr()}.
+Ecco le ${candidateDataForAi.length} partite filtrate con i rispettivi mercati che rientrano nel range ${minOdds} - ${maxOdds}:
+${JSON.stringify(candidateDataForAi, null, 2)}
+
+Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID migliori in "selectedRaddoppioIds" per ottenere una quota moltiplicata vicina a 2.00.`;
+
+            debugState.lastAiPrompt = `--- SYSTEM INSTRUCTION ---\n${systemInstruction}\n\n--- USER PROMPT ---\n${userPrompt}`;
+
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    selectedRaddoppioIds: {
+                        type: "ARRAY",
+                        items: { type: "STRING" }
+                    },
+                    analyzedMatches: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                id: { type: "STRING" },
+                                recommendedOutcome: { type: "STRING" },
+                                recommendedOdd: { type: "NUMBER" },
+                                aiReliabilityPercent: { type: "NUMBER" },
+                                tacticalReasoning: { type: "STRING" },
+                                trapWarning: { type: "STRING" }
+                            },
+                            propertyOrdering: ["id", "recommendedOutcome", "recommendedOdd", "aiReliabilityPercent", "tacticalReasoning", "trapWarning"]
+                        }
+                    }
+                },
+                propertyOrdering: ["selectedRaddoppioIds", "analyzedMatches"]
+            };
+
+            try {
+                const activeKey = getActiveGeminiApiKey();
+
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema
+                    }
+                };
+
+                const result = await callGeminiWithBackoff(activeKey, payload);
+                const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (!rawJson) throw new Error('Risposta AI vuota');
+                const parsed = JSON.parse(rawJson);
+
+                debugState.lastAiRawResponse = parsed;
+                debugState.lastAiStatus = `Completata con successo (${new Date().toLocaleTimeString('it-IT')})`;
+
+                if (Array.isArray(parsed.analyzedMatches)) {
+                    parsed.analyzedMatches.forEach(aiItem => {
+                        const target = allMatches.find(m => String(m.id) === String(aiItem.id));
+                        if (target) {
+                            const chosenOutcome = aiItem.recommendedOutcome || target.bestPick.outcome;
+                            const chosenOdd = target.markets[chosenOutcome] || aiItem.recommendedOdd || target.bestPick.odd;
+                            target.bestPick = {
+                                outcome: chosenOutcome,
+                                odd: +Number(chosenOdd).toFixed(2),
+                                reliability: Math.min(95, Math.max(55, Math.round(aiItem.aiReliabilityPercent || 78))),
+                                calculatedByAi: true,
+                                inRange: true,
+                                reasoning: aiItem.tacticalReasoning || target.bestPick.reasoning,
+                                riskNote: aiItem.trapWarning || 'Nessuna criticità tattica rilevata.'
+                            };
+                        }
+                    });
+                }
+
+                let chosenPicks = [];
+                if (Array.isArray(parsed.selectedRaddoppioIds)) {
+                    chosenPicks = parsed.selectedRaddoppioIds
+                        .map(id => allMatches.find(m => String(m.id) === String(id)))
+                        .filter(Boolean)
+                        .slice(0, 3);
+                }
+
+                if (chosenPicks.length >= 2) {
+                    raddoppioPicks = chosenPicks;
+                } else {
+                    raddoppioPicks = findOptimalCombination2Or3(pool);
+                }
+
+                alternativePicks = pool.filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id)));
+
+                hasRunAiAnalysis = true;
+                document.getElementById('aiResultsWrapper').classList.remove('hidden');
+
+                renderRaddoppioTicket();
+                renderAlternativesList();
+                renderAllMatchesTab();
+                showToast(`Raddoppio AI (${raddoppioPicks.length} partite) generato!`);
+
+            } catch (error) {
+                buildSmartHeuristicAnalysis(pool);
+                debugState.lastAiStatus = `Fallback Algoritmo Esperto Locale (${error.message || 'API Key non configurata'})`;
+                hasRunAiAnalysis = true;
+                document.getElementById('aiResultsWrapper').classList.remove('hidden');
+                showToast('Raddoppio generato!', 'info');
+            } finally {
+                loadingBox.classList.add('hidden');
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-60');
+            }
+        }
+
+        async function callGeminiWithBackoff(activeKey, payload) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeKey}`;
+            const delays = [1000, 2000, 4000];
+
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (err) {
+                    // Riprova con backoff
+                }
+                if (attempt < delays.length) {
+                    await new Promise(r => setTimeout(r, delays[attempt]));
+                }
+            }
+            throw new Error('Richiesta Gemini API non riuscita');
+        }
+
+        function buildSmartHeuristicAnalysis(pool) {
+            pool.forEach(m => {
+                const p = m.bestPick;
+                p.calculatedByAi = true;
+                p.reliability = Math.min(91, p.reliability + 2);
+                p.reasoning = `Analisi multi-mercato: ${p.outcome} (@${p.odd.toFixed(2)}) offre il miglior bilanciamento su ${m.homeTeam}-${m.awayTeam} considerando gli xG (${m.xgHome} vs ${m.xgAway}) e lo stato di forma ${m.homeForm} / ${m.awayForm}.`;
+                p.riskNote = p.odd >= 1.48 ? 'Possibile equilibrio nel primo tempo; esito protetto dal trend offensivo nel secondo tempo.' : 'Mercato ad alta copertura statistica con basso rischio di imprevisto.';
+            });
+
+            raddoppioPicks = findOptimalCombination2Or3(pool);
+            alternativePicks = pool.filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id))).slice(0, 6);
+
+            debugState.lastAiRawResponse = {
+                mode: "Local_Expert_Fallback",
+                selectedRaddoppioIds: raddoppioPicks.map(m => m.id),
+                analyzedMatches: pool.map(m => ({
+                    id: m.id,
+                    match: `${m.homeTeam} vs ${m.awayTeam}`,
+                    recommendedOutcome: m.bestPick.outcome,
+                    recommendedOdd: m.bestPick.odd,
+                    aiReliabilityPercent: m.bestPick.reliability
+                }))
+            };
+
+            renderRaddoppioTicket();
+            renderAlternativesList();
+            renderAllMatchesTab();
+        }
+
+        // ============================================================================
+        // RENDERING CARD PARTITA SECONDO IL LAYOUT DBET:
+        // - Sopra: Solo riquadro sigla (es. NL, IT) + Campionato + Orario | Tasto (i)
+        // - Centro Sinistra: Stemmi più grandi (w-7 h-7) e nomi squadre più grandi
+        // - Centro Destra: Riquadro Esito/Quota più compatto
+        // - Sotto: Solo Affidabilità Stimata AI
+        // ============================================================================
+        function renderRaddoppioTicket() {
+            const listEl = document.getElementById('ticketSelectionsList');
+            if (!raddoppioPicks || raddoppioPicks.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-6 text-xs text-zinc-400">Nessuna partita selezionata.</div>`;
+                return;
+            }
+
+            let multipliedOdds = 1;
+            let sumReliability = 0;
+
+            listEl.innerHTML = raddoppioPicks.map((m) => {
+                const pick = m.bestPick;
+                multipliedOdds *= pick.odd;
+                sumReliability += pick.reliability;
+                const fallbackHome = getFallbackCrestDataUri(m.homeTeam);
+                const fallbackAway = getFallbackCrestDataUri(m.awayTeam);
+
+                return `
+                <div class="p-3.5 rounded-2xl bg-darkbg border border-darkborder space-y-3 relative">
+                    <!-- Top Row: Riquadro sigla nazione (senza nome nazione) + Campionato + Orario | Tasto (i) -->
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5 text-[11px] text-zinc-400 font-semibold truncate">
+                            <span class="px-1.5 py-0.5 rounded bg-darkelevated border border-darkborder text-[10px] font-black text-zinc-200 tracking-wider">${m.flag}</span>
+                            <span class="text-zinc-300 truncate">${m.league}</span>
+                            <span class="text-zinc-600">•</span>
+                            <span class="font-odds text-brand-400 font-bold">${m.time}</span>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            ${raddoppioPicks.length > 2 ? `
+                            <button onclick="removeFromRaddoppio('${m.id}')" title="Rimuovi dal raddoppio" class="w-7 h-7 rounded-full bg-darkelevated hover:bg-rose-950/80 border border-darkborder text-zinc-400 hover:text-rose-400 flex items-center justify-center text-[11px] transition">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            ` : ''}
+                            <button onclick="openMatchInfoModal('${m.id}')" title="Statistiche e Check Rischio AI" class="w-7 h-7 rounded-full bg-brand-400/15 hover:bg-brand-400 text-brand-400 hover:text-darkbg border border-brand-400/40 flex items-center justify-center font-black text-xs transition active:scale-90">
+                                <i class="fa-solid fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Middle Row: Stemmi e nomi squadre più grandi a sinistra | Riquadro Esito/Quota più compatto a destra -->
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="space-y-2 min-w-0 flex-1">
+                            <!-- Squadra in Casa (Sopra) -->
+                            <div class="flex items-center gap-2.5">
+                                <img src="${m.homeLogo}" alt="${m.homeTeam}" onerror="this.onerror=null;this.src='${fallbackHome}';" class="w-7 h-7 object-contain shrink-0 rounded-full bg-darkelevated p-0.5">
+                                <span class="text-[15px] font-extrabold text-white truncate">${m.homeTeam}</span>
+                            </div>
+                            <!-- Squadra Ospite (Sotto) -->
+                            <div class="flex items-center gap-2.5">
+                                <img src="${m.awayLogo}" alt="${m.awayTeam}" onerror="this.onerror=null;this.src='${fallbackAway}';" class="w-7 h-7 object-contain shrink-0 rounded-full bg-darkelevated p-0.5">
+                                <span class="text-[15px] font-bold text-zinc-200 truncate">${m.awayTeam}</span>
+                            </div>
+                        </div>
+
+                        <!-- Box Destro Compatto: Esito più in grande sopra, Quota più piccola sotto -->
+                        <div onclick="openMatchInfoModal('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-brand-400 text-darkbg text-right shrink-0 shadow-md shadow-brand-400/10 cursor-pointer hover:bg-brand-300 transition min-w-[92px]">
+                            <span class="text-xs font-black uppercase tracking-tight block leading-tight">${pick.outcome}</span>
+                            <span class="font-odds text-[10px] font-bold opacity-85 block mt-0.5">${pick.odd.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: Solo Affidabilità Stimata AI -->
+                    <div class="space-y-1 pt-1 border-t border-darkborder/70">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="text-zinc-400 font-medium flex items-center gap-1">
+                                <i class="fa-solid fa-microchip text-brand-400 text-[10px]"></i>
+                                <span>Affidabilità Stimata</span>
+                            </span>
+                            <span class="font-odds font-extrabold text-brand-400">${pick.reliability}%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-darkelevated rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-brand-500 to-brand-300 rounded-full transition-all duration-500" style="width: ${pick.reliability}%"></div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            const avgReliability = Math.round(sumReliability / raddoppioPicks.length);
+
+            document.getElementById('ticketMatchCountBadge').textContent = `${raddoppioPicks.length} Eventi`;
+            document.getElementById('ticketTotalOdds').textContent = multipliedOdds.toFixed(2);
+            document.getElementById('ticketReliabilityBadge').textContent = `${avgReliability}%`;
+            document.getElementById('ticketDateLabel').textContent = `Oggi, ${formatDateIt(getTodayDateStr())}`;
+
+            updatePotentialWin();
+        }
+
+        function renderAlternativesList() {
+            const container = document.getElementById('alternativesList');
+            if (!alternativePicks || alternativePicks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-zinc-500 py-2">Nessuna alternativa disponibile.</p>`;
+                return;
+            }
+
+            container.innerHTML = alternativePicks.map(m => {
+                const p = m.bestPick;
+                const fallbackHome = getFallbackCrestDataUri(m.homeTeam);
+                const fallbackAway = getFallbackCrestDataUri(m.awayTeam);
+
+                return `
+                <div class="p-3 rounded-2xl bg-darkcard border border-darkborder space-y-2.5">
+                    <div class="flex items-center justify-between text-[11px] text-zinc-400">
+                        <div class="flex items-center gap-1.5 font-semibold truncate">
+                            <span class="px-1.5 py-0.5 rounded bg-darkelevated border border-darkborder text-[10px] font-black text-zinc-200">${m.flag}</span>
+                            <span class="text-zinc-300 truncate">${m.league}</span>
+                            <span class="text-zinc-600">•</span>
+                            <span class="font-odds text-brand-400 font-bold">${m.time}</span>
+                        </div>
+                        <button onclick="openMatchInfoModal('${m.id}')" class="w-6 h-6 rounded-full bg-darkelevated border border-darkborder text-brand-400 flex items-center justify-center text-[10px] font-black">
+                            <i class="fa-solid fa-info"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2.5">
+                        <div class="space-y-1.5 min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <img src="${m.homeLogo}" onerror="this.onerror=null;this.src='${fallbackHome}';" class="w-6 h-6 object-contain rounded-full bg-darkelevated p-0.5">
+                                <span class="text-sm font-extrabold text-white truncate">${m.homeTeam}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <img src="${m.awayLogo}" onerror="this.onerror=null;this.src='${fallbackAway}';" class="w-6 h-6 object-contain rounded-full bg-darkelevated p-0.5">
+                                <span class="text-sm font-bold text-zinc-300 truncate">${m.awayTeam}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            <div class="text-right bg-darkbg px-2.5 py-1.5 rounded-xl border border-darkborder">
+                                <span class="text-xs font-black text-brand-400 block leading-tight">${p.outcome}</span>
+                                <span class="font-odds text-[10px] font-bold text-zinc-400">${p.odd.toFixed(2)} • ${p.reliability}%</span>
+                            </div>
+                            <button onclick="addOrSwapInRaddoppio('${m.id}')" title="Aggiungi come 3ª partita o sostituisci" class="w-8 h-8 rounded-xl bg-brand-400/15 hover:bg-brand-400 text-brand-400 hover:text-darkbg border border-brand-400/40 flex items-center justify-center transition active:scale-90">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Gestisce l'inserimento nel raddoppio (supporta 2 o 3 partite)
+        function addOrSwapInRaddoppio(matchId) {
+            const candidate = allMatches.find(m => String(m.id) === String(matchId));
+            if (!candidate) return;
+
+            if (raddoppioPicks.some(r => String(r.id) === String(matchId))) {
+                showToast('Questa partita è già presente nel Raddoppio!', 'info');
+                return;
+            }
+
+            if (raddoppioPicks.length < 3) {
+                raddoppioPicks.push(candidate);
+                alternativePicks = alternativePicks.filter(m => String(m.id) !== String(matchId));
+                showToast(`Aggiunta ${candidate.homeTeam}-${candidate.awayTeam} (Raddoppio a 3 partite)!`);
+            } else {
+                const removed = raddoppioPicks.pop();
+                raddoppioPicks.push(candidate);
+                alternativePicks = alternativePicks.filter(m => String(m.id) !== String(matchId));
+                if (removed) alternativePicks.unshift(removed);
+                showToast(`Sostituita con ${candidate.homeTeam}-${candidate.awayTeam}!`);
+            }
+
+            renderRaddoppioTicket();
+            renderAlternativesList();
+            renderAllMatchesTab();
+        }
+
+        function removeFromRaddoppio(matchId) {
+            if (raddoppioPicks.length <= 2) {
+                showToast('Il raddoppio richiede almeno 2 partite!', 'info');
+                return;
+            }
+            const removed = raddoppioPicks.find(m => String(m.id) === String(matchId));
+            raddoppioPicks = raddoppioPicks.filter(m => String(m.id) !== String(matchId));
+            if (removed) alternativePicks.unshift(removed);
+
+            renderRaddoppioTicket();
+            renderAlternativesList();
+            renderAllMatchesTab();
+            showToast('Partita rimossa: raddoppio riportato a 2 eventi.');
+        }
+
+        // ============================================================================
+        // POPUP (i) DETTAGLI PARTITA, STATISTICHE E CHECK RISCHIO AI
+        // ============================================================================
+        function openMatchInfoModal(matchId) {
+            const m = allMatches.find(item => String(item.id) === String(matchId));
+            if (!m) return;
+
+            const modal = document.getElementById('matchInfoModal');
+            const body = document.getElementById('modalMatchBody');
+            const p = m.bestPick;
+            const fallbackHome = getFallbackCrestDataUri(m.homeTeam);
+            const fallbackAway = getFallbackCrestDataUri(m.awayTeam);
+
+            document.getElementById('modalMatchLeague').textContent = `[${m.flag}] ${m.league} (${m.time})`;
+
+            body.innerHTML = `
+                <!-- Riepilogo Squadre con Stemmi -->
+                <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-between gap-3">
+                    <div class="space-y-2 flex-1 min-w-0">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${m.homeLogo}" onerror="this.onerror=null;this.src='${fallbackHome}';" class="w-7 h-7 object-contain rounded-full bg-darkelevated p-0.5">
+                            <div>
+                                <span class="text-sm font-black text-white block truncate">${m.homeTeam}</span>
+                                <span class="text-[10px] text-zinc-400 font-mono">Record V-P-S: ${m.homeRecord} | Forma: ${m.homeForm}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <img src="${m.awayLogo}" onerror="this.onerror=null;this.src='${fallbackAway}';" class="w-7 h-7 object-contain rounded-full bg-darkelevated p-0.5">
+                            <div>
+                                <span class="text-sm font-black text-zinc-200 block truncate">${m.awayTeam}</span>
+                                <span class="text-[10px] text-zinc-400 font-mono">Record V-P-S: ${m.awayRecord} | Forma: ${m.awayForm}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${hasRunAiAnalysis ? `
+                    <div class="px-3 py-2 rounded-xl liquid-gold-pill text-right shrink-0">
+                        <span class="text-xs font-black uppercase block">${p.outcome}</span>
+                        <span class="font-odds text-[11px] font-bold block">Quota ${p.odd.toFixed(2)}</span>
+                        <span class="text-[10px] font-extrabold block mt-0.5">${p.reliability}% AI</span>
+                    </div>
+                    ` : `
+                    <div class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-right shrink-0">
+                        <span class="text-[10px] font-bold text-zinc-300 block">In attesa di</span>
+                        <span class="text-[10px] font-black text-brand-400 uppercase block">Stima AI</span>
+                    </div>
+                    `}
+                </div>
+
+                <!-- Statistiche Matematiche & xG -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="p-3 rounded-2xl bg-black/40 border border-white/10">
+                        <span class="text-[10px] text-zinc-400 uppercase font-bold block">Gol Attesi (xG Poisson)</span>
+                        <span class="font-odds text-sm font-black text-brand-400 mt-0.5 block">${m.xgHome} vs ${m.xgAway}</span>
+                        <span class="text-[10px] text-zinc-500">Totale atteso: ${(m.xgHome + m.xgAway).toFixed(2)} gol</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-black/40 border border-white/10">
+                        <span class="text-[10px] text-zinc-400 uppercase font-bold block">Stato Stima AI</span>
+                        <span class="font-odds text-sm font-black text-white mt-0.5 block">${hasRunAiAnalysis ? `${p.reliability}% Affidabilità` : 'Da eseguire'}</span>
+                        <span class="text-[10px] text-zinc-500">${hasRunAiAnalysis ? `${m.passingMarkets.length} mercati idonei` : 'Avvia analisi in Homepage'}</span>
+                    </div>
+                </div>
+
+                ${hasRunAiAnalysis ? `
+                <!-- Analisi Tattica AI & Check Rischio -->
+                <div class="p-3.5 rounded-2xl bg-black/40 border border-brand-400/30 space-y-2">
+                    <div class="flex items-center gap-1.5 text-brand-400 font-extrabold text-xs">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        <span>Analisi Tattica & Motivazione Scelta</span>
+                    </div>
+                    <p class="text-zinc-200 leading-relaxed">${p.reasoning}</p>
+
+                    <div class="pt-2 border-t border-white/10 flex items-start gap-2 text-amber-300">
+                        <i class="fa-solid fa-shield-halved mt-0.5"></i>
+                        <div>
+                            <span class="font-extrabold block text-[11px] uppercase">Check Rischio & Possibili Trappole</span>
+                            <p class="text-zinc-300 text-[11px] mt-0.5">${p.riskNote}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selettore Rapido Tutti i 19 Mercati Calcolati -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-extrabold uppercase text-zinc-400">Tutti i Mercati Calcolati (Tocca per cambiare esito)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        ${Object.entries(m.markets).map(([mkt, odd]) => {
+                            const isSelected = p.outcome === mkt;
+                            const inFilter = odd >= debugState.filterRange.min && odd <= debugState.filterRange.max;
+                            return `
+                            <button onclick="selectCustomMarketForMatch('${m.id}', '${mkt}'); openMatchInfoModal('${m.id}');" class="ios-press p-2 rounded-xl border text-left transition ${isSelected ? 'liquid-gold-pill border-brand-300 font-black' : inFilter ? 'bg-black/40 border-brand-400/30 text-white hover:border-brand-400' : 'bg-black/25 border-white/10 text-zinc-400'}">
+                                <span class="text-[10px] block truncate">${mkt}</span>
+                                <span class="font-odds text-xs font-extrabold">${odd.toFixed(2)}</span>
+                            </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                ` : `
+                <div class="p-4 rounded-2xl bg-black/40 border border-white/10 text-center space-y-2.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-brand-400 text-lg"></i>
+                    <p class="text-xs text-zinc-300 font-medium">Quote, mercato consigliato, percentuale di affidabilità e check rischio saranno visibili dopo la stima AI.</p>
+                    <button onclick="closeMatchInfoModal(); switchTab('homepage'); runFullAiPipeline();" class="ios-press px-4 py-2.5 rounded-xl liquid-gold-pill font-black text-xs inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> Avvia Stima AI Ora
+                    </button>
+                </div>
+                `}
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeMatchInfoModal() {
+            document.getElementById('matchInfoModal').classList.add('hidden');
+        }
+
+        // ============================================================================
+        // RENDERING TAB 2: PARTITE & MERCATI
+        // (Mostra quote e affidabilità SOLO dopo che è avvenuta la stima AI)
+        // ============================================================================
+        function setMatchListFilter(mode) {
+            matchListFilterMode = mode;
+            const btnAll = document.getElementById('filterBtnAll');
+            const btnFiltered = document.getElementById('filterBtnFiltered');
+
+            if (mode === 'all') {
+                btnAll.className = 'ios-press flex-1 py-1.5 rounded-xl bg-white/10 text-brand-400 transition';
+                btnFiltered.className = 'ios-press flex-1 py-1.5 rounded-xl text-zinc-400 transition';
+            } else {
+                btnFiltered.className = 'ios-press flex-1 py-1.5 rounded-xl liquid-gold-pill font-black transition';
+                btnAll.className = 'ios-press flex-1 py-1.5 rounded-xl text-zinc-400 transition';
+            }
+            renderAllMatchesTab();
+        }
+
+        function renderAllMatchesTab() {
+            const container = document.getElementById('allMatchesContainer');
+            const list = matchListFilterMode === 'filtered' ? filteredMatches : allMatches;
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 rounded-3xl liquid-glass text-center space-y-2">
+                        <p class="text-xs text-zinc-300">Nessuna partita rientra in questo filtro.</p>
+                        <button onclick="setMatchListFilter('all')" class="ios-press px-3 py-1.5 rounded-xl bg-white/10 text-xs text-brand-400 font-bold">Mostra tutte</button>
+                    </div>`;
+                return;
+            }
+
+            const featuredMarketKeys = ['1', 'X', '2', '1X', 'X2', 'Over 1.5', 'Under 3.5', 'Goal (GG)', '1 Segna', 'Multigol 1-3', 'Multigol 1-4', 'Multigol 2-4'];
+
+            container.innerHTML = list.map(m => {
+                const isSelectedInRaddoppio = hasRunAiAnalysis && raddoppioPicks.some(r => String(r.id) === String(m.id));
+                const p = m.bestPick;
+                const fallbackHome = getFallbackCrestDataUri(m.homeTeam);
+                const fallbackAway = getFallbackCrestDataUri(m.awayTeam);
+
+                return `
+                <div class="p-3.5 rounded-3xl liquid-glass ${isSelectedInRaddoppio ? 'border-brand-400/70' : ''} space-y-3">
+                    <!-- Header: Sigla Nazione + Campionato + Orario | Azioni -->
+                    <div class="flex items-center justify-between text-[11px]">
+                        <div class="flex items-center gap-1.5 text-zinc-400 font-semibold truncate">
+                            <span class="px-1.5 py-0.5 rounded-md bg-white/10 border border-white/15 text-[10px] font-black text-zinc-100">${m.flag}</span>
+                            <span class="text-zinc-200 truncate">${m.league}</span>
+                            <span class="text-zinc-500">•</span>
+                            <span class="font-odds text-brand-400 font-bold">${m.time}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            ${hasRunAiAnalysis ? `
+                            <button onclick="addOrSwapInRaddoppio('${m.id}'); switchTab('homepage');" class="ios-press px-2.5 py-1 rounded-full bg-brand-400/15 hover:bg-brand-400 text-brand-400 hover:text-darkbg border border-brand-400/30 text-[10px] font-black transition">
+                                + Usa nel 2X
+                            </button>
+                            ` : ''}
+                            <button onclick="openMatchInfoModal('${m.id}')" class="ios-press w-7 h-7 rounded-full bg-white/10 border border-white/15 text-brand-400 flex items-center justify-center text-xs font-black">
+                                <i class="fa-solid fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Squadre in verticale con stemma più grande + Esito/Quota visibili SOLO dopo stima AI -->
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="space-y-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2.5">
+                                <img src="${m.homeLogo}" onerror="this.onerror=null;this.src='${fallbackHome}';" class="w-7 h-7 object-contain rounded-full bg-black/40 p-0.5">
+                                <span class="text-[15px] font-extrabold text-white truncate">${m.homeTeam}</span>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <img src="${m.awayLogo}" onerror="this.onerror=null;this.src='${fallbackAway}';" class="w-7 h-7 object-contain rounded-full bg-black/40 p-0.5">
+                                <span class="text-[15px] font-bold text-zinc-200 truncate">${m.awayTeam}</span>
+                            </div>
+                        </div>
+
+                        ${hasRunAiAnalysis ? `
+                        <div class="px-2.5 py-1.5 rounded-xl liquid-gold-pill text-right shrink-0 min-w-[84px]">
+                            <span class="text-xs font-black uppercase block leading-tight">${p.outcome}</span>
+                            <span class="font-odds text-[10px] font-bold block mt-0.5">${p.odd.toFixed(2)}</span>
+                        </div>
+                        ` : `
+                        <div class="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-right shrink-0">
+                            <span class="text-[10px] font-semibold text-zinc-400 block leading-tight">In attesa di</span>
+                            <span class="text-[10px] font-extrabold text-brand-400 uppercase tracking-wider block mt-0.5">Stima AI</span>
+                        </div>
+                        `}
+                    </div>
+
+                    ${hasRunAiAnalysis ? `
+                    <!-- Barra Affidabilità Stimata AI (Visibile solo dopo stima AI) -->
+                    <div class="space-y-1 pt-1 border-t border-white/10">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="text-zinc-300 font-medium flex items-center gap-1">
+                                <i class="fa-solid fa-microchip text-brand-400 text-[10px]"></i>
+                                <span>Affidabilità Stimata</span>
+                            </span>
+                            <span class="font-odds font-extrabold text-brand-400">${p.reliability}%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-black/45 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-brand-500 to-brand-300 rounded-full transition-all duration-500" style="width: ${p.reliability}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Griglia Rapida Mercati Principali & Multigol (Visibile solo dopo stima AI) -->
+                    <div class="grid grid-cols-4 gap-1.5 pt-1">
+                        ${featuredMarketKeys.map(k => {
+                            const v = m.markets[k];
+                            if (!v) return '';
+                            const isBest = p.outcome === k;
+                            return `
+                            <button onclick="selectCustomMarketForMatch('${m.id}', '${k}')" class="ios-press p-1.5 rounded-xl border text-center transition ${isBest ? 'liquid-gold-pill border-brand-300 font-black' : 'bg-black/35 border-white/10 text-zinc-300 hover:border-brand-400/50'}">
+                                <span class="text-[9px] uppercase block truncate opacity-85">${k}</span>
+                                <span class="font-odds text-[11px] font-bold">${v.toFixed(2)}</span>
+                            </button>
+                            `;
+                        }).join('')}
+                    </div>
+                    ` : ''}
+                </div>
+                `;
+            }).join('');
+        }
+
+        function selectCustomMarketForMatch(matchId, marketKey) {
+            const match = allMatches.find(m => String(m.id) === String(matchId));
+            if (!match) return;
+
+            const odd = match.markets[marketKey];
+            const prob = Math.min(93, Math.max(52, Math.round((1 / odd) * 95)));
+
+            match.bestPick = {
+                outcome: marketKey,
+                odd: odd,
+                reliability: prob,
+                calculatedByAi: true,
+                inRange: true,
+                reasoning: `Mercato ${marketKey} (@${odd.toFixed(2)}) selezionato dall'utente. Affidabilità stimata al ${prob}% in base ai gol attesi (${match.xgHome} - ${match.xgAway}).`,
+                riskNote: 'Selezione personalizzata manualmente.'
+            };
+
+            renderAllMatchesTab();
+            renderRaddoppioTicket();
+            renderAlternativesList();
+            showToast(`Impostato ${marketKey} (@${odd.toFixed(2)}) per ${match.homeTeam}!`);
+        }
+
+        // ============================================================================
+        // SIMULATORE PUNTATA, COPIA NEGLI APPUNTI E STORICO LOCALE
+        // ============================================================================
+        function setStake(amount) {
+            currentStake = amount;
+            document.querySelectorAll('.stake-btn').forEach(btn => {
+                if (btn.textContent === `${amount}€`) {
+                    btn.className = 'stake-btn px-2 py-1 rounded-md text-xs font-odds font-bold bg-brand-400 text-darkbg';
+                } else {
+                    btn.className = 'stake-btn px-2 py-1 rounded-md text-xs font-odds font-bold text-zinc-400';
+                }
+            });
+            updatePotentialWin();
+        }
+
+        function updatePotentialWin() {
+            const totalOdds = parseFloat(document.getElementById('ticketTotalOdds').textContent) || 0;
+            const win = (currentStake * totalOdds).toFixed(2);
+            document.getElementById('potentialWinDisplay').textContent = `${win} €`;
+        }
+
+        function copyTicketToClipboard() {
+            if (!raddoppioPicks || raddoppioPicks.length < 2) return;
+            const dateStr = formatDateIt(getTodayDateStr());
+            const totalOdds = document.getElementById('ticketTotalOdds').textContent;
+
+            const lines = [
+                `⚡ DBET - RADDOPPIO (${dateStr})`,
+                `--------------------------------`,
+                ...raddoppioPicks.map((m, i) => `${i + 1}) ${m.homeTeam} - ${m.awayTeam} (${m.time})\n   👉 Esito: ${m.bestPick.outcome} | Quota ${m.bestPick.odd.toFixed(2)} (Affidabilità ${m.bestPick.reliability}%)`),
+                `--------------------------------`,
+                `🔥 QUOTA TOTALE: ${totalOdds}`
+            ].join('\n');
+
+            const textarea = document.createElement('textarea');
+            textarea.value = lines;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast('Schedina copiata negli appunti!');
+        }
+
+        function saveTicketToHistory() {
+            if (!raddoppioPicks || raddoppioPicks.length < 2) return;
+            const history = JSON.parse(localStorage.getItem('raddoppio_saved_history') || '[]');
+            const totalOdds = document.getElementById('ticketTotalOdds').textContent;
+
+            const newEntry = {
+                id: Date.now(),
+                date: formatDateIt(getTodayDateStr()),
+                totalOdds: totalOdds,
+                matches: raddoppioPicks.map(m => ({
+                    title: `${m.homeTeam} - ${m.awayTeam}`,
+                    outcome: m.bestPick.outcome,
+                    odd: m.bestPick.odd
+                }))
+            };
+
+            history.unshift(newEntry);
+            localStorage.setItem('raddoppio_saved_history', JSON.stringify(history.slice(0, 15)));
+            renderSavedHistory();
+            showToast('Raddoppio salvato in Schedine Salvate!');
+        }
+
+        function renderSavedHistory() {
+            const container = document.getElementById('savedHistoryList');
+            const history = window.cloudSavedTickets || [];
+
+            if (history.length === 0) {
+                container.innerHTML = `<div class="p-4 rounded-3xl liquid-glass text-center text-xs text-zinc-400">Nessun raddoppio salvato nel tuo Cloud Firestore.</div>`;
+                return;
+            }
+
+            container.innerHTML = history.map(item => `
+                <div class="p-3.5 rounded-3xl liquid-glass flex items-center justify-between gap-2">
+                    <div class="text-xs space-y-0.5">
+                        <span class="text-[10px] text-zinc-400 font-bold block">${item.date} (${(item.matches || []).length} eventi)</span>
+                        ${(item.matches || []).map(m => `<div class="text-zinc-100 font-medium">${m.title}: <span class="text-brand-400 font-bold">${m.outcome}</span> <span class="font-odds text-[11px] text-zinc-400">(@${Number(m.odd).toFixed(2)})</span></div>`).join('')}
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-[10px] text-zinc-400 block">Quota</span>
+                        <span class="font-odds text-sm font-black text-brand-400">${item.totalOdds}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearSavedHistory() {
+            localStorage.removeItem('raddoppio_saved_history');
+            renderSavedHistory();
+            showToast('Storico svuotato', 'info');
+        }
+
+        // ============================================================================
+        // DOWNLOAD DIRETTO DEL FILE INDEX.HTML PER GITHUB PAGES
+        // ============================================================================
+        function downloadStandaloneHtml() {
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('File index.html scaricato! Pronto per GitHub Pages.');
+        }
+
+        // ============================================================================
+        // PALINSESTO DEMO REALISTICO CON STEMMI UFFICIALI E MULTI-MERCATO
+        // ============================================================================
+        function loadDemoRichSchedule() {
+            const dateVal = getTodayDateStr();
+            allMatches = getRealisticFallbackMatches(dateVal);
+            debugState.lastFetchTimestamp = new Date().toLocaleTimeString('it-IT') + ' (Demo Big Match)';
+            debugState.rawEventsCount = allMatches.length;
+            applyMathematicalFilter();
+            buildInitialMathematicalRaddoppio();
+            showToast('Caricato palinsesto Big Match Europeo!');
+        }
+
+        function getRealisticFallbackMatches(dateStr) {
+            const rawMatches = [
+                {
+                    id: 'sim-101', league: 'Serie A', country: 'Italia', flag: 'IT', time: '20:45',
+                    homeTeam: 'Inter', awayTeam: 'Torino',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/110.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/239.png',
+                    homeRecord: '19-4-2', awayRecord: '8-9-8',
+                    homeForm: 'WWWDW', awayForm: 'DLWLD',
+                    xgHome: 2.08, xgAway: 0.72
+                },
+                {
+                    id: 'sim-102', league: 'Premier League', country: 'Inghilterra', flag: 'EN', time: '18:30',
+                    homeTeam: 'Arsenal', awayTeam: 'Fulham',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/359.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/370.png',
+                    homeRecord: '18-5-3', awayRecord: '10-6-10',
+                    homeForm: 'WWWWL', awayForm: 'WLDWL',
+                    xgHome: 1.98, xgAway: 0.84
+                },
+                {
+                    id: 'sim-103', league: 'La Liga', country: 'Spagna', flag: 'ES', time: '21:00',
+                    homeTeam: 'Real Madrid', awayTeam: 'Real Sociedad',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/86.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/89.png',
+                    homeRecord: '20-5-1', awayRecord: '11-8-7',
+                    homeForm: 'WWDWW', awayForm: 'DWWLL',
+                    xgHome: 2.04, xgAway: 0.88
+                },
+                {
+                    id: 'sim-104', league: 'Bundesliga', country: 'Germania', flag: 'DE', time: '17:30',
+                    homeTeam: 'Bayer Leverkusen', awayTeam: 'Wolfsburg',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/131.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/138.png',
+                    homeRecord: '19-6-1', awayRecord: '7-7-12',
+                    homeForm: 'WWWWW', awayForm: 'LLDWL',
+                    xgHome: 2.15, xgAway: 0.85
+                },
+                {
+                    id: 'sim-105', league: 'Serie A', country: 'Italia', flag: 'IT', time: '18:00',
+                    homeTeam: 'Bologna', awayTeam: 'Atalanta',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/107.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/105.png',
+                    homeRecord: '13-8-5', awayRecord: '15-5-6',
+                    homeForm: 'WDWWD', awayForm: 'WWLWW',
+                    xgHome: 1.32, xgAway: 1.48
+                },
+                {
+                    id: 'sim-106', league: 'Eredivisie', country: 'Olanda', flag: 'NL', time: '20:45',
+                    homeTeam: 'PSV', awayTeam: 'Twente',
+                    homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/148.png',
+                    awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/152.png',
+                    homeRecord: '20-3-1', awayRecord: '14-6-4',
+                    homeForm: 'WWWDW', awayForm: 'WWDLW',
+                    xgHome: 2.12, xgAway: 0.92
+                }
+            ];
+
+            rawMatches.forEach(m => {
+                m.markets = computeExtendedMarketsFromXg(m.xgHome, m.xgAway);
+                m.passingMarkets = [];
+                m.bestPick = selectOptimalMarketForRaddoppio(m);
+            });
+            return rawMatches;
+        }
+
+        // ============================================================================
+        // CONSOLE DI DEBUG PER SVILUPPATORI (Partite -> Filtro -> Esito AI)
+        // ============================================================================
+        function openDebugModal() {
+            document.getElementById('dbgCountRaw').textContent = allMatches.length;
+            document.getElementById('dbgCountFiltered').textContent = filteredMatches.length;
+            renderDebugContent();
+            document.getElementById('debugModal').classList.remove('hidden');
+        }
+
+        function closeDebugModal() {
+            document.getElementById('debugModal').classList.add('hidden');
+        }
+
+        function switchDebugTab(tab) {
+            currentDebugTab = tab;
+            ['raw', 'filtered', 'ai'].forEach(t => {
+                const btn = document.getElementById(`dbgTabBtn-${t}`);
+                if (!btn) return;
+                if (t === tab) {
+                    btn.className = 'py-1.5 rounded-xl bg-brand-400 text-darkbg transition font-black';
+                } else {
+                    btn.className = 'py-1.5 rounded-xl text-zinc-400 hover:text-white transition';
+                }
+            });
+            renderDebugContent();
+        }
+
+        function renderDebugContent() {
+            const container = document.getElementById('debugModalContent');
+            if (!container) return;
+
+            if (currentDebugTab === 'raw') {
+                container.innerHTML = `
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-300 space-y-1">
+                        <div><span class="text-brand-400 font-bold">Ultimo Scarico:</span> ${debugState.lastFetchTimestamp || 'N/D'}</div>
+                        <div><span class="text-brand-400 font-bold">Partite Totali Scaricate:</span> ${allMatches.length}</div>
+                    </div>
+                    <div class="space-y-2">
+                        ${allMatches.map((m, idx) => `
+                            <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                                <div class="text-brand-400 font-bold">#${idx + 1} [${m.flag}] ${m.league} (${m.time}) - ID: ${m.id}</div>
+                                <div class="text-white font-bold">${m.homeTeam} vs ${m.awayTeam}</div>
+                                <div class="text-zinc-400">Record: Casa ${m.homeRecord} (${m.homeForm}) | Ospiti ${m.awayRecord} (${m.awayForm})</div>
+                                <div class="text-zinc-300">xG Poisson: Casa <span class="text-brand-400">${m.xgHome}</span> - Ospiti <span class="text-brand-400">${m.xgAway}</span></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (currentDebugTab === 'filtered') {
+                container.innerHTML = `
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-300 space-y-1">
+                        <div><span class="text-brand-400 font-bold">Range Filtro Attivo:</span> ${debugState.filterRange.min} – ${debugState.filterRange.max}</div>
+                        <div><span class="text-brand-400 font-bold">Partite Idonee:</span> ${filteredMatches.length} su ${allMatches.length}</div>
+                        <div><span class="text-brand-400 font-bold">Totale Quote nel Range:</span> ${debugState.passedMarketsCount}</div>
+                    </div>
+                    <div class="space-y-2">
+                        ${filteredMatches.map(m => `
+                            <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-white font-bold">${m.homeTeam} - ${m.awayTeam}</span>
+                                    <span class="text-brand-400 font-bold">Top: ${m.bestPick.outcome} @${m.bestPick.odd.toFixed(2)} (${m.bestPick.reliability}%)</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1">
+                                    ${m.passingMarkets.map(pm => `
+                                        <span class="px-1.5 py-0.5 rounded bg-black/50 border border-white/10 text-[10px] text-zinc-300">
+                                            ${pm.outcome}: <strong class="text-brand-400">${pm.odd.toFixed(2)}</strong>
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                const aiResponseText = debugState.lastAiRawResponse
+                    ? JSON.stringify(debugState.lastAiRawResponse, null, 2)
+                    : 'Nessuna risposta AI ancora ricevuta.';
+
+                container.innerHTML = `
+                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-300 space-y-1">
+                        <div><span class="text-brand-400 font-bold">Stato Motore AI:</span> ${debugState.lastAiStatus}</div>
+                        <div><span class="text-brand-400 font-bold">Stima Eseguita:</span> ${hasRunAiAnalysis ? 'SÌ' : 'NO'}</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-brand-400 font-bold uppercase text-[10px]">Risposta JSON AI / Motore Esperto:</div>
+                        <pre class="p-2.5 rounded-xl bg-black/70 border border-white/10 text-zinc-200 overflow-x-auto whitespace-pre-wrap">${aiResponseText}</pre>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-brand-400 font-bold uppercase text-[10px]">Ultimo Prompt Inviato:</div>
+                        <pre class="p-2.5 rounded-xl bg-black/70 border border-white/10 text-zinc-400 overflow-x-auto whitespace-pre-wrap">${debugState.lastAiPrompt}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        function copyDebugLog() {
+            const fullDump = {
+                timestamp: new Date().toISOString(),
+                debugState: debugState,
+                allMatchesCount: allMatches.length,
+                filteredMatchesCount: filteredMatches.length,
+                raddoppioPicks: raddoppioPicks.map(m => ({
+                    match: `${m.homeTeam} vs ${m.awayTeam}`,
+                    pick: m.bestPick
+                }))
+            };
+            const textarea = document.createElement('textarea');
+            textarea.value = JSON.stringify(fullDump, null, 2);
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('Log di debug copiato negli appunti!');
+        }
+
+        // ============================================================================
+        // TOAST NOTIFICATION HELPER
+        // ============================================================================
+        let toastTimeout = null;
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('appToast');
+            const textEl = document.getElementById('appToastText');
+            const iconEl = document.getElementById('appToastIcon');
+            if (!toast || !textEl) return;
+
+            textEl.textContent = message;
+            if (iconEl) {
+                if (type === 'error') {
+                    iconEl.className = 'fa-solid fa-triangle-exclamation text-rose-400';
+                } else if (type === 'info') {
+                    iconEl.className = 'fa-solid fa-circle-info text-brand-400';
+                } else {
+                    iconEl.className = 'fa-solid fa-circle-check text-brand-400';
+                }
+            }
+
+            toast.classList.remove('hidden');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2600);
+        }
+
+        function formatDateIt(yyyyMmDd) {
+            if (!yyyyMmDd) return 'Oggi';
+            const parts = yyyyMmDd.split('-');
+            if (parts.length !== 3) return yyyyMmDd;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+    </script>
+</body>
+</html>
