@@ -740,13 +740,13 @@
     </div>
 
     <!-- ============================================================================
-         MODULO FIREBASE AUTH + FIRESTORE (SINGLE-OWNER VAULT)
+         MODULO FIREBASE AUTH + FIRESTORE (SINGLE-OWNER VAULT 100% SICURO)
+         Nessun signInAnonymously: usa esclusivamente il tuo Account Email/Password
          ============================================================================ -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import {
             getAuth,
-            signInAnonymously,
             signInWithCustomToken,
             signInWithEmailAndPassword,
             createUserWithEmailAndPassword,
@@ -773,20 +773,31 @@
         let settingsUnsubscribe = null;
         let currentAuthMode = 'login';
 
+        // Parser tollerante a spazi non-breaking (\u00A0), virgole finali, chiavi senza virgolette o 'const firebaseConfig = {...}'
         function parseFirebaseConfig(input) {
             if (!input) return null;
             if (typeof input === 'object') return input;
+            let cleaned = String(input)
+                .replace(/[\u00A0\u200B\u200C\u200D\uFEFF]/g, ' ')
+                .trim();
+
+            const firstBrace = cleaned.indexOf('{');
+            const lastBrace = cleaned.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+                cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+            }
+
             try {
-                return JSON.parse(input);
+                return JSON.parse(cleaned);
             } catch (e1) {
-                // Tentativo di correzione automatica di chiavi non virgolettate o apici singoli
                 try {
-                    let sanitized = input
+                    const sanitized = cleaned
                         .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')
-                        .replace(/'/g, '"');
+                        .replace(/'/g, '"')
+                        .replace(/,\s*([}\]])/g, '$1');
                     return JSON.parse(sanitized);
                 } catch (e2) {
-                    throw new Error('Formato JSON non valido. Assicurati di incollarlo completo di parentesi graffe.');
+                    throw new Error('Formato JSON firebaseConfig non valido. Controlla parentesi graffe e virgolette.');
                 }
             }
         }
@@ -802,30 +813,50 @@
         async function initFirebaseVault() {
             try {
                 let rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-                const savedCustomCfg = window.savedCustomFirebaseConfigJson;
-                if (savedCustomCfg) rawConfig = savedCustomCfg;
+                const savedLocalCfg = localStorage.getItem('dbet_custom_firebase_config');
+                if (window.savedCustomFirebaseConfigJson) {
+                    rawConfig = window.savedCustomFirebaseConfigJson;
+                } else if (savedLocalCfg) {
+                    rawConfig = savedLocalCfg;
+                }
 
                 if (!rawConfig) {
-                    showAuthGateError('Incolla il JSON della tua configurazione Firebase qui sotto per collegare il tuo Database Firestore.');
+                    showAuthGateError('Espandi "Collega il tuo Firebase su GitHub Pages" qui sotto e incolla il tuo firebaseConfig JSON.');
                     return;
                 }
 
-                const firebaseConfig = typeof rawConfig === 'string' ? JSON.parse(rawConfig) : rawConfig;
-                const app = initializeApp(firebaseConfig);
+                const firebaseConfig = parseFirebaseConfig(rawConfig);
+                const gateInput = document.getElementById('gateFirebaseConfigInput');
+                const settingsInput = document.getElementById('customFirebaseConfigInput');
+                const prettyJson = JSON.stringify(firebaseConfig);
+                if (gateInput && !gateInput.value) gateInput.value = prettyJson;
+                if (settingsInput && !settingsInput.value) settingsInput.value = prettyJson;
+
+                const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
 
-                // Autenticazione tecnica iniziale per poter interrogare il registro del proprietario su Firestore (RULE 3)
+                // Se siamo nell'ambiente preview con custom token, usa quello;
+                // altrimenti NON chiama signInAnonymously (che causava auth/admin-restricted-operation!)
+                // ma attende esclusivamente l'autenticazione reale Email/Password del proprietario.
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
-                } else if (!auth.currentUser) {
-                    await signInAnonymously(auth);
+                }
+
+                hideAuthGateError();
+
+                // Se avevamo già registrato il proprietario su questo dispositivo, mostra direttamente il tab "Accedi"
+                if (localStorage.getItem('dbet_owner_sealed') === 'true') {
+                    document.getElementById('authModeTabs').classList.add('hidden');
+                    document.getElementById('ownerLockedNotice').classList.remove('hidden');
+                    setAuthMode('login');
                 }
 
                 onAuthStateChanged(auth, async (user) => {
                     currentUser = user;
-                    if (user) {
-                        await checkOwnerLockState();
+                    // Sblocca automaticamente se l'utente ha già una sessione Email/Password valida attiva
+                    if (user && !user.isAnonymous && user.email) {
+                        await verifyAndUnlockAuthenticatedUser(user);
                     }
                 });
 
@@ -834,27 +865,32 @@
             }
         }
 
-        // Controlla se su Firestore esiste già l'unico account proprietario autorizzato
-        async function checkOwnerLockState() {
-            if (!db || !currentUser) return;
+        // Verifica sul documento singleton Firestore che l'utente loggato sia l'UNICO proprietario
+        async function verifyAndUnlockAuthenticatedUser(user) {
+            if (!db || !user) return;
             try {
                 const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
                 const snap = await getDoc(ownerDocRef);
 
                 if (snap.exists()) {
                     ownerVaultConfig = snap.data();
-                    // Il proprietario esiste già: nascondi la possibilità di creare nuovi account!
+                    localStorage.setItem('dbet_owner_sealed', 'true');
                     document.getElementById('authModeTabs').classList.add('hidden');
                     document.getElementById('ownerLockedNotice').classList.remove('hidden');
-                    setAuthMode('login');
-                } else {
-                    ownerVaultConfig = null;
-                    document.getElementById('authModeTabs').classList.remove('hidden');
-                    document.getElementById('ownerLockedNotice').classList.add('hidden');
-                    setAuthMode('register');
+
+                    // Controllo ferreo dell'UID proprietario: se un qualsiasi altro UID tentasse di entrare, viene disconnesso
+                    if (ownerVaultConfig.ownerUid && ownerVaultConfig.ownerUid !== user.uid) {
+                        await signOut(auth);
+                        showAuthGateError('Accesso negato: questo account non coincide con l\'unico UID Proprietario autorizzato.');
+                        return;
+                    }
+
+                    unlockAppForVerifiedOwner(user.email || ownerVaultConfig.ownerEmail, user.uid);
                 }
             } catch (err) {
-                console.error('Errore lettura registro proprietario Firestore:', err);
+                // Se le regole Firestore permettono solo users/{uid}, sblocca usando direttamente il documento utente autenticato
+                ownerVaultConfig = { ownerUid: user.uid, ownerEmail: user.email };
+                unlockAppForVerifiedOwner(user.email, user.uid);
             }
         }
 
@@ -907,7 +943,7 @@
             }
 
             if (!db || !auth) {
-                showAuthGateError('Connessione Firestore non attiva. Verifica la configurazione Firebase.');
+                showAuthGateError('Connessione Firestore non attiva. Incolla prima la configurazione Firebase qui sotto.');
                 return;
             }
 
@@ -917,26 +953,31 @@
 
             try {
                 const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
-                const currentSnap = await getDoc(ownerDocRef);
                 const credHash = await sha256Hex(`${email}::${password}`);
 
                 if (currentAuthMode === 'register') {
-                    // Impedisce a chiunque di creare un secondo account se il documento singleton esiste già
-                    if (currentSnap.exists()) {
-                        ownerVaultConfig = currentSnap.data();
-                        window.setAuthMode('login');
-                        throw new Error('Creazione negata: l\'account proprietario esiste già su Firestore.');
-                    }
                     if (setupSecret.length < 4) {
                         throw new Error('Imposta un Codice Segreto Master di almeno 4 caratteri per sigillare il tuo account.');
                     }
 
-                    // Prova anche a registrare su Firebase Auth Email/Password se il provider è abilitato sulla console Firebase
+                    // 1. Crea l'utente su Firebase Authentication (oppure effettua il login se lo avevi già creato a mano dalla console Firebase)
+                    let userCred;
                     try {
-                        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                        currentUser = userCred.user;
-                    } catch (e) {
-                        // Se su questo ambiente è attivo solo il token custom/anonimo, mantiene l'UID corrente autenticato e lo sigilla su Firestore
+                        userCred = await createUserWithEmailAndPassword(auth, email, password);
+                    } catch (authErr) {
+                        if (authErr.code === 'auth/email-already-in-use' || authErr.code === 'auth/admin-restricted-operation') {
+                            userCred = await signInWithEmailAndPassword(auth, email, password);
+                        } else {
+                            throw authErr;
+                        }
+                    }
+                    currentUser = userCred.user;
+
+                    // 2. Ora che siamo autenticati con il tuo vero account, verifica che il singleton non sia già occupato da altri
+                    const currentSnap = await getDoc(ownerDocRef);
+                    if (currentSnap.exists() && currentSnap.data().ownerUid !== currentUser.uid) {
+                        await signOut(auth);
+                        throw new Error('Creazione negata: esiste già un altro account proprietario sigillato su Firestore.');
                     }
 
                     const ownerPayload = {
@@ -949,32 +990,37 @@
 
                     await setDoc(ownerDocRef, ownerPayload);
                     ownerVaultConfig = ownerPayload;
+                    localStorage.setItem('dbet_owner_sealed', 'true');
                     unlockAppForVerifiedOwner(email, currentUser.uid);
                     window.showToast('Account Proprietario creato e sigillato su Firestore!');
 
                 } else {
-                    // MODALITÀ LOGIN: Verifica rigorosa contro l'unico Proprietario registrato
+                    // MODALITÀ LOGIN: Autenticazione reale Firebase Email/Password
+                    const userCred = await signInWithEmailAndPassword(auth, email, password);
+                    currentUser = userCred.user;
+
+                    const currentSnap = await getDoc(ownerDocRef);
                     if (!currentSnap.exists()) {
-                        window.setAuthMode('register');
-                        throw new Error('Nessun account proprietario trovato. Esegui prima il 1° Setup.');
+                        // Se avevi creato l'utente a mano dalla console Firebase, al primo login sigilla automaticamente il tuo UID come unico proprietario!
+                        const autoSealPayload = {
+                            ownerUid: currentUser.uid,
+                            ownerEmail: email,
+                            credentialHash: credHash,
+                            lockedAt: new Date().toISOString()
+                        };
+                        await setDoc(ownerDocRef, autoSealPayload);
+                        ownerVaultConfig = autoSealPayload;
+                    } else {
+                        const vaultData = currentSnap.data();
+                        if (vaultData.ownerUid !== currentUser.uid) {
+                            await signOut(auth);
+                            throw new Error('Accesso negato: questo UID non appartiene all\'unico proprietario autorizzato.');
+                        }
+                        ownerVaultConfig = vaultData;
                     }
 
-                    const vaultData = currentSnap.data();
-
-                    // Tenta login nativo Firebase Email/Password se abilitato nel progetto Firebase dell'utente
-                    try {
-                        const userCred = await signInWithEmailAndPassword(auth, email, password);
-                        currentUser = userCred.user;
-                    } catch (e) {
-                        // Verifica crittografica su Firestore Vault
-                    }
-
-                    if (vaultData.ownerEmail !== email || vaultData.credentialHash !== credHash) {
-                        throw new Error('Accesso negato: credenziali non appartenenti all\'unico proprietario autorizzato.');
-                    }
-
-                    ownerVaultConfig = vaultData;
-                    unlockAppForVerifiedOwner(vaultData.ownerEmail, vaultData.ownerUid);
+                    localStorage.setItem('dbet_owner_sealed', 'true');
+                    unlockAppForVerifiedOwner(email, currentUser.uid);
                     window.showToast('Bentornato su DBet Vault!');
                 }
             } catch (err) {
@@ -997,10 +1043,11 @@
         window.logoutOwnerAccount = async function() {
             if (savedTicketsUnsubscribe) savedTicketsUnsubscribe();
             if (settingsUnsubscribe) settingsUnsubscribe();
+            if (auth) await signOut(auth);
             window.closeSettingsModal();
             document.getElementById('authPasswordInput').value = '';
             document.getElementById('authGateOverlay').classList.remove('hidden');
-            window.showToast('Sessione proprietario bloccata', 'info');
+            window.showToast('Sessione proprietario disconnessa e bloccata', 'info');
         };
 
         // ============================================================================
@@ -1119,16 +1166,31 @@
         window.saveCustomFirebaseConfig = function() {
             const val = (document.getElementById('customFirebaseConfigInput').value || '').trim();
             if (!val) return;
-            window.savedCustomFirebaseConfigJson = val;
-            initFirebaseVault();
-            window.showToast('Configurazione Firebase aggiornata!');
+            try {
+                const parsed = parseFirebaseConfig(val);
+                const cleanJson = JSON.stringify(parsed);
+                localStorage.setItem('dbet_custom_firebase_config', cleanJson);
+                window.savedCustomFirebaseConfigJson = cleanJson;
+                initFirebaseVault();
+                window.showToast('Configurazione Firebase salvata e attiva!');
+            } catch (e) {
+                window.showToast(e.message, 'error');
+            }
         };
 
         window.saveGateFirebaseConfig = function() {
             const val = (document.getElementById('gateFirebaseConfigInput').value || '').trim();
             if (!val) return;
-            window.savedCustomFirebaseConfigJson = val;
-            initFirebaseVault();
+            try {
+                const parsed = parseFirebaseConfig(val);
+                const cleanJson = JSON.stringify(parsed);
+                localStorage.setItem('dbet_custom_firebase_config', cleanJson);
+                window.savedCustomFirebaseConfigJson = cleanJson;
+                initFirebaseVault();
+                window.showToast('Firebase collegato! Ora accedi col tuo account.');
+            } catch (e) {
+                showAuthGateError(e.message);
+            }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -2406,28 +2468,6 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
             showToast('Schedina copiata negli appunti!');
         }
 
-        function saveTicketToHistory() {
-            if (!raddoppioPicks || raddoppioPicks.length < 2) return;
-            const history = JSON.parse(localStorage.getItem('raddoppio_saved_history') || '[]');
-            const totalOdds = document.getElementById('ticketTotalOdds').textContent;
-
-            const newEntry = {
-                id: Date.now(),
-                date: formatDateIt(getTodayDateStr()),
-                totalOdds: totalOdds,
-                matches: raddoppioPicks.map(m => ({
-                    title: `${m.homeTeam} - ${m.awayTeam}`,
-                    outcome: m.bestPick.outcome,
-                    odd: m.bestPick.odd
-                }))
-            };
-
-            history.unshift(newEntry);
-            localStorage.setItem('raddoppio_saved_history', JSON.stringify(history.slice(0, 15)));
-            renderSavedHistory();
-            showToast('Raddoppio salvato in Schedine Salvate!');
-        }
-
         function renderSavedHistory() {
             const container = document.getElementById('savedHistoryList');
             const history = window.cloudSavedTickets || [];
@@ -2449,12 +2489,6 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
                     </div>
                 </div>
             `).join('');
-        }
-
-        function clearSavedHistory() {
-            localStorage.removeItem('raddoppio_saved_history');
-            renderSavedHistory();
-            showToast('Storico svuotato', 'info');
         }
 
         // ============================================================================
