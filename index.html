@@ -773,6 +773,24 @@
         let settingsUnsubscribe = null;
         let currentAuthMode = 'login';
 
+        function parseFirebaseConfig(input) {
+            if (!input) return null;
+            if (typeof input === 'object') return input;
+            try {
+                return JSON.parse(input);
+            } catch (e1) {
+                // Tentativo di correzione automatica di chiavi non virgolettate o apici singoli
+                try {
+                    let sanitized = input
+                        .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')
+                        .replace(/'/g, '"');
+                    return JSON.parse(sanitized);
+                } catch (e2) {
+                    throw new Error('Formato JSON non valido. Assicurati di incollarlo completo di parentesi graffe.');
+                }
+            }
+        }
+
         // Hash SHA-256 lato client per verifica crittografica delle credenziali nel Vault Firestore
         async function sha256Hex(text) {
             const encoder = new TextEncoder();
