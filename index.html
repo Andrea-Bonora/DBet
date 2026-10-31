@@ -242,51 +242,21 @@
             transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
-
-        /* ==========================================================================
-           NATIVO iPHONE PWA STANDALONE SHELL (ANTI-BLUR STATUS BAR & INTERATTIVO AL 100%)
-           ========================================================================== */
-        html, body {
-            min-height: 100dvh;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        /* Fascia protettiva superiore per Notch / Dynamic Island iOS: evita che iOS sfumi il titolo */
-        .ios-status-bar-shield {
-            height: env(safe-area-inset-top, 0px);
-            width: 100%;
-            background: rgba(14, 14, 17, 0.96);
-            flex-shrink: 0;
-            z-index: 40;
-        }
-        .ios-app-shell {
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
-        }
-        .ios-safe-bottom-nav {
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
-        }
-        .ios-toast-safe {
-            top: calc(env(safe-area-inset-top, 0px) + 4.25rem);
-        }
     </style>
 </head>
-<body class="flex flex-col items-center text-zinc-100">
+<body class="min-h-[100dvh] flex flex-col items-center text-zinc-100">
 
     <!-- Contenitore Mobile App fluido e cliccabile al 100% su iPhone e Desktop -->
-    <div id="appTouchContainer" class="w-full max-w-[480px] ios-app-shell relative shadow-2xl border-x border-white/10">
+    <div id="appTouchContainer" class="w-full max-w-[480px] min-h-[100dvh] flex flex-col relative shadow-2xl border-x border-white/10 pb-32 overflow-hidden">
 
-        <!-- Header Unificato Sticky con Scudo Status Bar iPhone integrato (il titolo non sfuma mai sotto l'orologio iOS) -->
-        <div class="sticky top-0 z-30 w-full">
-            <div class="ios-status-bar-shield"></div>
-            <header class="liquid-glass border-x-0 border-t-0 px-4 py-2.5 flex items-center justify-between gap-2">
-                <div class="flex items-center gap-3 min-w-0">
-                    <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
-                    <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
+        <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
+        <div class="pointer-events-none fixed top-24 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
+
+        <!-- Header Unificato Sticky con Safe Area (il titolo non sfuma mai sotto l'orologio iOS) -->
+        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 pb-3 pt-[calc(env(safe-area-inset-top,0px)+1rem)] flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
+                <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand-400/20 via-transparent to-transparent"></div>
                         <svg class="w-8 h-8 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
@@ -707,7 +677,7 @@
         </div>
 
         <!-- TOAST NOTIFICATION LIQUID GLASS -->
-        <div id="appToast" class="fixed ios-toast-safe left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full liquid-glass-deep border-brand-400/60 text-white text-xs font-bold shadow-2xl flex items-center gap-2 max-w-[90vw]">
+        <div id="appToast" class="fixed left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-full liquid-glass-deep border-brand-400/60 text-white text-xs font-bold shadow-2xl flex items-center gap-2 max-w-[90vw]" style="top: calc(env(safe-area-inset-top, 0px) + 4.5rem);">
             <i id="appToastIcon" class="fa-solid fa-circle-check text-brand-400"></i>
             <span id="appToastText">Operazione completata</span>
         </div>
@@ -797,7 +767,7 @@
              FLOATING iOS 26 LIQUID GLASS NAVBAR (Più stretta e compatta a capsula)
              Supporta sia il tocco sia il trascinamento del dito sulla barra
              ============================================================================ -->
-        <div class="fixed ios-safe-bottom-nav left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto">
+        <div class="fixed left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem);">
             <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none">
                 <!-- Indicatore a Pillola Liquida Scorrevole -->
                 <div id="navLiquidIndicator" class="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-full pointer-events-none z-0"></div>
