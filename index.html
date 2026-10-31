@@ -128,7 +128,9 @@
             color: #F4F4F6;
             overscroll-behavior-y: none;
             user-select: none;
-            overflow-x: hidden;
+            overflow: hidden; /* Blocca il viewport esterno in stile App nativa iOS */
+            height: 100dvh;
+            width: 100vw;
         }
         .font-odds {
             font-family: 'JetBrains Mono', monospace;
@@ -239,21 +241,21 @@
 
         /* Bottom Sheet Drag Physics */
         .sheet-panel {
-            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: transform;
+        .ios-toast-safe {
+            top: calc(env(safe-area-inset-top, 0px) + 4.25rem);
         }
     </style>
 </head>
-<body class="min-h-[100dvh] flex flex-col items-center text-zinc-100">
+<body class="flex flex-col items-center text-zinc-100">
 
     <!-- Contenitore Mobile App fluido e cliccabile al 100% su iPhone e Desktop -->
-    <div id="appTouchContainer" class="w-full max-w-[480px] min-h-[100dvh] flex flex-col relative shadow-2xl border-x border-white/10 pb-32 overflow-hidden">
+    <div id="appTouchContainer" class="w-full max-w-[480px] h-full flex flex-col relative shadow-2xl border-x border-white/10">
 
         <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
         <div class="pointer-events-none fixed top-24 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
 
-        <!-- Header Unificato Sticky con Safe Area (il titolo non sfuma mai sotto l'orologio iOS) -->
-        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 pb-3 pt-[calc(env(safe-area-inset-top,0px)+1rem)] flex items-center justify-between gap-2">
+        <!-- Header Unificato Fisso con Safe Area (il titolo non sfuma mai sotto l'orologio iOS) -->
+        <header class="z-30 liquid-glass border-x-0 border-t-0 px-4 pb-3 pt-[calc(env(safe-area-inset-top,12px)+0.75rem)] flex items-center justify-between gap-2 shrink-0">
             <div class="flex items-center gap-3 min-w-0">
                 <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
                 <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
@@ -293,14 +295,10 @@
                         <i class="fa-solid fa-gear text-sm"></i>
                     </button>
                 </div>
-            </header>
-        </div>
+        </header>
 
-        <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
-        <div class="pointer-events-none fixed top-24 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
-
-        <!-- CONTENUTO PRINCIPALE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
-        <main id="mainSwipeArea" class="flex-1 px-3.5 pt-3.5 space-y-4 relative z-10 spring-tab-transition">
+        <!-- CONTENITORE PRINCIPALE DELLE 3 SCHEDE (Area Scrollabile Nativa all'interno dell'App Shell) -->
+        <main id="mainSwipeArea" class="flex-1 overflow-y-auto overflow-x-hidden px-3.5 pt-3.5 pb-[calc(env(safe-area-inset-bottom,12px)+6rem)] space-y-4 relative z-10 spring-tab-transition overscroll-y-contain">
 
             <!-- ==========================================
                  TAB 1: HOMEPAGE
@@ -767,7 +765,7 @@
              FLOATING iOS 26 LIQUID GLASS NAVBAR (Più stretta e compatta a capsula)
              Supporta sia il tocco sia il trascinamento del dito sulla barra
              ============================================================================ -->
-        <div class="fixed left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem);">
+        <div class="fixed left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto" style="bottom: calc(env(safe-area-inset-bottom, 12px) + 1.25rem);">
             <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none">
                 <!-- Indicatore a Pillola Liquida Scorrevole -->
                 <div id="navLiquidIndicator" class="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-full pointer-events-none z-0"></div>
