@@ -185,37 +185,66 @@
             will-change: transform;
         }
 
-        /* Fix iPhone PWA Standalone (Notch / Dynamic Island & Safe Areas) */
-        .ios-safe-header {
-            padding-top: calc(env(safe-area-inset-top, 0px) + 0.65rem);
+        /* ==========================================================================
+           NATIVO iPHONE PWA STANDALONE SHELL (ANTI-BLUR STATUS BAR & 100dvh LOCK)
+           ========================================================================== */
+        html, body {
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+            inset: 0;
         }
-        .ios-safe-bottom-nav {
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.85rem);
+        /* Fascia protettiva superiore per Notch / Dynamic Island iOS: evita che iOS sfumi il titolo */
+        .ios-status-bar-shield {
+            height: env(safe-area-inset-top, 0px);
+            width: 100%;
+            background: rgba(14, 14, 17, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            flex-shrink: 0;
+            z-index: 40;
         }
         .ios-app-shell {
-            min-height: 100dvh;
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
+            height: 100dvh;
+            max-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ios-scroll-main {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+        }
+        .ios-safe-bottom-nav {
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.65rem);
         }
         .ios-toast-safe {
             top: calc(env(safe-area-inset-top, 0px) + 4.25rem);
         }
     </style>
 </head>
-<body class="min-h-[100dvh] flex flex-col items-center text-zinc-100">
+<body class="flex flex-col items-center text-zinc-100">
 
-    <!-- Contenitore Mobile App ottimizzato per iPhone PWA (100dvh + Safe Area) -->
-    <div id="appTouchContainer" class="w-full max-w-[480px] ios-app-shell flex flex-col relative shadow-2xl border-x border-white/10 overflow-x-hidden">
+    <!-- Contenitore Mobile App bloccato a 100dvh con scroll interno nativo iPhone -->
+    <div id="appTouchContainer" class="w-full max-w-[480px] ios-app-shell relative shadow-2xl border-x border-white/10">
+
+        <!-- Scudo Status Bar iPhone (impedisce la sfumatura del titolo sotto l'orario/Dynamic Island) -->
+        <div class="ios-status-bar-shield"></div>
 
         <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
-        <div class="pointer-events-none fixed top-20 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
+        <div class="pointer-events-none fixed top-24 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
 
-        <!-- TOP APP BAR: Safe Area per iPhone Notch/Dynamic Island, Logo DBet, Debug, Impostazioni -->
-        <header class="sticky top-0 z-30 liquid-glass border-x-0 border-t-0 px-4 pb-3 ios-safe-header flex items-center justify-between gap-2">
+        <!-- TOP APP BAR: Nitida, ben visibile sotto la Dynamic Island di iPhone -->
+        <header class="z-30 liquid-glass border-x-0 border-t-0 px-4 py-2.5 flex items-center justify-between gap-2 shrink-0">
             <div class="flex items-center gap-3 min-w-0">
                 <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
-                <div class="w-11 h-11 rounded-2xl bg-darkbg/90 border border-brand-400/50 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
+                <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-br from-brand-400/20 via-transparent to-transparent"></div>
-                    <svg class="w-9 h-9 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-8 h-8 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <linearGradient id="dbGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#FEF08A"/>
@@ -234,7 +263,7 @@
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="font-black text-2xl tracking-tighter italic text-white leading-none drop-shadow">D<span class="text-brand-400">Bet</span></h1>
+                    <h1 class="font-black text-2xl tracking-tighter italic text-white leading-none">D<span class="text-brand-400">Bet</span></h1>
                 </div>
             </div>
 
@@ -252,8 +281,8 @@
             </div>
         </header>
 
-        <!-- CONTENUTO PRINCIPALE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
-        <main id="mainSwipeArea" class="flex-1 px-3.5 pt-4 space-y-5 relative z-10 spring-tab-transition">
+        <!-- CONTENUTO PRINCIPALE SCORREVOLE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
+        <main id="mainSwipeArea" class="ios-scroll-main no-scrollbar px-3.5 pt-3.5 space-y-4 relative z-10 spring-tab-transition">
 
             <!-- ==========================================
                  TAB 1: HOMEPAGE
@@ -268,14 +297,14 @@
                     </button>
                 </div>
 
-                <!-- STATO DI CARICAMENTO AI -->
+                    <!-- STATO DI CARICAMENTO AI -->
                 <div id="aiLoadingBox" class="hidden p-5 rounded-3xl liquid-glass border-brand-400/40 text-center space-y-3">
                     <div class="w-12 h-12 rounded-2xl bg-brand-400/15 border border-brand-400/40 flex items-center justify-center mx-auto text-brand-400 shadow-inner">
                         <i class="fa-solid fa-microchip fa-spin text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-white">Analisi AI in corso sulle partite di oggi...</h3>
-                        <p class="text-xs text-zinc-400 mt-1">Calcolo quote, affidabilità e selezione del raddoppio ottimale...</p>
+                        <h3 class="text-sm font-bold text-white">Analisi Deep-Thinking AI in corso...</h3>
+                        <p class="text-xs text-zinc-400 mt-1">Verifica forma, xG, assenze, motivazioni di classifica, tenuta difensiva e value bet...</p>
                     </div>
                     <div class="w-full bg-black/40 h-1.5 rounded-full overflow-hidden p-0.5">
                         <div class="bg-brand-400 h-full w-2/3 animate-pulse rounded-full"></div>
@@ -680,23 +709,7 @@
                     </p>
                 </div>
 
-                <!-- Selettore Login / Prima Registrazione Proprietario (nascosto automaticamente non appena l'account proprietario esiste!) -->
-                <div id="authModeTabs" class="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-black/50 border border-white/10 text-xs font-bold">
-                    <button onclick="setAuthMode('login')" id="authTabLogin" class="py-2 rounded-xl liquid-gold-pill font-black">
-                        Accedi
-                    </button>
-                    <button onclick="setAuthMode('register')" id="authTabRegister" class="py-2 rounded-xl text-zinc-400 hover:text-white">
-                        Crea Account (1° Setup)
-                    </button>
-                </div>
-
-                <!-- Avviso quando la registrazione è bloccata perché il proprietario è già registrato -->
-                <div id="ownerLockedNotice" class="hidden p-3 rounded-2xl bg-black/40 border border-white/10 text-[11px] text-zinc-300 text-center">
-                    <i class="fa-solid fa-user-shield text-brand-400 mr-1"></i>
-                    L'account proprietario è già stato registrato e sigillato. Nessun nuovo account può essere creato.
-                </div>
-
-                <!-- Form Credenziali -->
+                <!-- Form Credenziali (Solo Login Proprietario - Creazione Account Rimossa) -->
                 <div class="space-y-3 relative z-10">
                     <div class="space-y-1">
                         <label class="text-[11px] font-bold text-zinc-300">Email Proprietario</label>
@@ -704,20 +717,8 @@
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[11px] font-bold text-zinc-300">Password / Master PIN</label>
-                        <input type="password" id="authPasswordInput" placeholder="••••••••••••" class="w-full bg-black/50 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
-                    </div>
-
-                    <!-- Chiave di Setup Master richiesta SOLO per la creazione dell'unico account -->
-                    <div id="authSetupSecretWrap" class="hidden space-y-1 pt-1">
-                        <label class="text-[11px] font-bold text-brand-400 flex items-center justify-between">
-                            <span>Codice Segreto Creazione Proprietario</span>
-                            <span class="text-[9px] text-zinc-400 font-normal">Richiesto solo al 1° avvio</span>
-                        </label>
-                        <input type="password" id="authSetupSecretInput" placeholder="Crea o inserisci il tuo Codice Master" class="w-full bg-black/50 border border-brand-400/40 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
-                        <p class="text-[10px] text-zinc-400 leading-snug">
-                            Una volta creato il tuo account, Firestore bloccherà per sempre la registrazione a chiunque altro.
-                        </p>
+                        <label class="text-[11px] font-bold text-zinc-300">Password</label>
+                        <input type="password" id="authPasswordInput" placeholder="••••••••••••" onkeydown="if(event.key==='Enter') handleOwnerAuthSubmit()" class="w-full bg-black/50 border border-white/15 focus:border-brand-400 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
                     </div>
 
                     <p id="authErrorMsg" class="hidden text-[11px] text-rose-400 font-semibold text-center bg-rose-950/40 border border-rose-500/30 rounded-xl p-2"></p>
@@ -807,7 +808,7 @@
         let ownerVaultConfig = null;
         let savedTicketsUnsubscribe = null;
         let settingsUnsubscribe = null;
-        let currentAuthMode = 'login';
+        let dailyAnalysisUnsubscribe = null;
 
         // Parser tollerante a spazi non-breaking (\u00A0), virgole finali, chiavi senza virgolette o 'const firebaseConfig = {...}'
         function parseFirebaseConfig(input) {
@@ -894,12 +895,6 @@
 
                 hideAuthGateError();
 
-                if (localStorage.getItem('dbet_owner_sealed') === 'true') {
-                    document.getElementById('authModeTabs').classList.add('hidden');
-                    document.getElementById('ownerLockedNotice').classList.remove('hidden');
-                    setAuthMode('login');
-                }
-
                 onAuthStateChanged(auth, async (user) => {
                     currentUser = user;
                     // Se l'utente è già loggato, sblocca direttamente l'app senza mai mostrare il form di login
@@ -929,8 +924,6 @@
                 if (snap.exists()) {
                     ownerVaultConfig = snap.data();
                     localStorage.setItem('dbet_owner_sealed', 'true');
-                    document.getElementById('authModeTabs').classList.add('hidden');
-                    document.getElementById('ownerLockedNotice').classList.remove('hidden');
 
                     // Controllo ferreo dell'UID proprietario: se un qualsiasi altro UID tentasse di entrare, viene disconnesso
                     if (ownerVaultConfig.ownerUid && ownerVaultConfig.ownerUid !== user.uid) {
@@ -942,7 +935,8 @@
 
                     unlockAppForVerifiedOwner(user.email || ownerVaultConfig.ownerEmail, user.uid);
                 } else {
-                    revealLoginCard();
+                    ownerVaultConfig = { ownerUid: user.uid, ownerEmail: user.email };
+                    unlockAppForVerifiedOwner(user.email, user.uid);
                 }
             } catch (err) {
                 // Se le regole Firestore permettono solo users/{uid}, sblocca usando direttamente il documento utente autenticato
@@ -950,31 +944,6 @@
                 unlockAppForVerifiedOwner(user.email, user.uid);
             }
         }
-
-        window.setAuthMode = function(mode) {
-            if (ownerVaultConfig && mode === 'register') {
-                showAuthGateError('Registrazione bloccata: l\'account proprietario è già stato creato.');
-                return;
-            }
-            currentAuthMode = mode;
-            const loginBtn = document.getElementById('authTabLogin');
-            const regBtn = document.getElementById('authTabRegister');
-            const secretWrap = document.getElementById('authSetupSecretWrap');
-            const submitText = document.getElementById('authSubmitBtnText');
-
-            if (mode === 'login') {
-                loginBtn.className = 'py-2 rounded-xl liquid-gold-pill font-black';
-                regBtn.className = 'py-2 rounded-xl text-zinc-400 hover:text-white';
-                secretWrap.classList.add('hidden');
-                submitText.textContent = 'Sblocca DBet';
-            } else {
-                regBtn.className = 'py-2 rounded-xl liquid-gold-pill font-black';
-                loginBtn.className = 'py-2 rounded-xl text-zinc-400 hover:text-white';
-                secretWrap.classList.remove('hidden');
-                submitText.textContent = 'Crea Unico Account Proprietario';
-            }
-            hideAuthGateError();
-        };
 
         function showAuthGateError(msg) {
             const el = document.getElementById('authErrorMsg');
@@ -992,10 +961,9 @@
             hideAuthGateError();
             const email = (document.getElementById('authEmailInput').value || '').trim().toLowerCase();
             const password = document.getElementById('authPasswordInput').value || '';
-            const setupSecret = (document.getElementById('authSetupSecretInput').value || '').trim();
 
             if (!email || !email.includes('@') || password.length < 6) {
-                showAuthGateError('Inserisci un\'email valida e una password di almeno 6 caratteri.');
+                showAuthGateError('Inserisci la tua email e password proprietario.');
                 return;
             }
 
@@ -1012,53 +980,13 @@
                 const ownerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'owner_registry', 'singleton');
                 const credHash = await sha256Hex(`${email}::${password}`);
 
-                if (currentAuthMode === 'register') {
-                    if (setupSecret.length < 4) {
-                        throw new Error('Imposta un Codice Segreto Master di almeno 4 caratteri per sigillare il tuo account.');
-                    }
+                // LOGIN ESCLUSIVO PROPRIETARIO: Autenticazione reale Firebase Email/Password
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                currentUser = userCred.user;
 
-                    // 1. Crea l'utente su Firebase Authentication (oppure effettua il login se lo avevi già creato a mano dalla console Firebase)
-                    let userCred;
-                    try {
-                        userCred = await createUserWithEmailAndPassword(auth, email, password);
-                    } catch (authErr) {
-                        if (authErr.code === 'auth/email-already-in-use' || authErr.code === 'auth/admin-restricted-operation') {
-                            userCred = await signInWithEmailAndPassword(auth, email, password);
-                        } else {
-                            throw authErr;
-                        }
-                    }
-                    currentUser = userCred.user;
-
-                    // 2. Ora che siamo autenticati con il tuo vero account, verifica che il singleton non sia già occupato da altri
-                    const currentSnap = await getDoc(ownerDocRef);
-                    if (currentSnap.exists() && currentSnap.data().ownerUid !== currentUser.uid) {
-                        await signOut(auth);
-                        throw new Error('Creazione negata: esiste già un altro account proprietario sigillato su Firestore.');
-                    }
-
-                    const ownerPayload = {
-                        ownerUid: currentUser.uid,
-                        ownerEmail: email,
-                        credentialHash: credHash,
-                        setupSecretHash: await sha256Hex(setupSecret),
-                        lockedAt: new Date().toISOString()
-                    };
-
-                    await setDoc(ownerDocRef, ownerPayload);
-                    ownerVaultConfig = ownerPayload;
-                    localStorage.setItem('dbet_owner_sealed', 'true');
-                    unlockAppForVerifiedOwner(email, currentUser.uid);
-                    window.showToast('Account Proprietario creato e sigillato su Firestore!');
-
-                } else {
-                    // MODALITÀ LOGIN: Autenticazione reale Firebase Email/Password
-                    const userCred = await signInWithEmailAndPassword(auth, email, password);
-                    currentUser = userCred.user;
-
+                try {
                     const currentSnap = await getDoc(ownerDocRef);
                     if (!currentSnap.exists()) {
-                        // Se avevi creato l'utente a mano dalla console Firebase, al primo login sigilla automaticamente il tuo UID come unico proprietario!
                         const autoSealPayload = {
                             ownerUid: currentUser.uid,
                             ownerEmail: email,
@@ -1069,19 +997,22 @@
                         ownerVaultConfig = autoSealPayload;
                     } else {
                         const vaultData = currentSnap.data();
-                        if (vaultData.ownerUid !== currentUser.uid) {
+                        if (vaultData.ownerUid && vaultData.ownerUid !== currentUser.uid) {
                             await signOut(auth);
                             throw new Error('Accesso negato: questo UID non appartiene all\'unico proprietario autorizzato.');
                         }
                         ownerVaultConfig = vaultData;
                     }
-
-                    localStorage.setItem('dbet_owner_sealed', 'true');
-                    unlockAppForVerifiedOwner(email, currentUser.uid);
-                    window.showToast('Bentornato su DBet Vault!');
+                } catch (permErr) {
+                    if (permErr.message && permErr.message.includes('Accesso negato')) throw permErr;
+                    ownerVaultConfig = { ownerUid: currentUser.uid, ownerEmail: email };
                 }
+
+                localStorage.setItem('dbet_owner_sealed', 'true');
+                unlockAppForVerifiedOwner(email, currentUser.uid);
+                window.showToast('Bentornato su DBet!');
             } catch (err) {
-                showAuthGateError(err.message || 'Autenticazione fallita');
+                showAuthGateError(err.message || 'Credenziali non valide');
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('opacity-60');
@@ -1100,6 +1031,7 @@
         window.logoutOwnerAccount = async function() {
             if (savedTicketsUnsubscribe) savedTicketsUnsubscribe();
             if (settingsUnsubscribe) settingsUnsubscribe();
+            if (dailyAnalysisUnsubscribe) dailyAnalysisUnsubscribe();
             if (auth) await signOut(auth);
             window.closeSettingsModal();
             document.getElementById('authPasswordInput').value = '';
@@ -1109,10 +1041,15 @@
         };
 
         // ============================================================================
-        // SINCRONIZZAZIONE REALTIME FIRESTORE (CHIAVI API + SCHEDINE + RADDOPPIO DI OGGI)
+        // SINCRONIZZAZIONE REALTIME FIRESTORE MULTI-DISPOSITIVO
+        // (CHIAVI API + SCHEDINE SALVATE + RADDOPPIO DEL GIORNO IN TEMPO REALE)
         // ============================================================================
         function subscribeOwnerFirestoreData(ownerUid) {
             if (!db || !currentUser) return;
+
+            if (settingsUnsubscribe) settingsUnsubscribe();
+            if (savedTicketsUnsubscribe) savedTicketsUnsubscribe();
+            if (dailyAnalysisUnsubscribe) dailyAnalysisUnsubscribe();
 
             // 1. Ascolto chiavi API private del proprietario su Firestore
             const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerUid, 'private_settings', 'api_keys');
@@ -1146,28 +1083,54 @@
                 console.error('Errore lettura schedine Firestore:', err);
             });
 
-            // 3. Ripristino automatico dal Cloud Firestore del Raddoppio generato OGGI (se presente)
+            // 3. Sincronizzazione in tempo reale (onSnapshot) del Raddoppio di OGGI su tutti i dispositivi collegati al tuo account
             const todayKey = window.getTodayDateStr();
             const dailyDocRef = doc(db, 'artifacts', appId, 'users', ownerUid, 'daily_analysis', todayKey);
-            getDoc(dailyDocRef).then((snap) => {
+            dailyAnalysisUnsubscribe = onSnapshot(dailyDocRef, (snap) => {
                 if (snap.exists()) {
                     const cloudState = snap.data();
                     if (cloudState && cloudState.date === todayKey && cloudState.hasRunAiAnalysis) {
-                        window.restoreDailyAnalysisSnapshot(cloudState);
+                        window.restoreDailyAnalysisSnapshot(cloudState, true);
                     }
                 }
-            }).catch(() => {});
+            }, (err) => {
+                console.error('Errore sincronizzazione raddoppio giornaliero Firestore:', err);
+            });
         }
 
-        // Salva lo stato dell'analisi giornaliera anche su Firestore così persiste tra chiusure e dispositivi
+        // Salva lo stato dell'analisi giornaliera su Firestore (serializzato in modo sicuro per compatibilità 100% Firestore)
         window.syncDailyAnalysisToCloud = async function(snapshotPayload) {
             if (!db || !currentUser || !ownerVaultConfig) return;
             try {
                 const todayKey = window.getTodayDateStr();
                 const dailyDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'daily_analysis', todayKey);
-                await setDoc(dailyDocRef, snapshotPayload);
+                await setDoc(dailyDocRef, {
+                    date: snapshotPayload.date,
+                    savedAt: snapshotPayload.savedAt,
+                    hasRunAiAnalysis: true,
+                    payloadJson: JSON.stringify(snapshotPayload)
+                });
             } catch (e) {
-                // In caso di offline, resta comunque salvato in localStorage
+                console.error('Errore scrittura daily_analysis su Firestore:', e);
+            }
+        };
+
+        // Salvataggio Chiavi API su Firestore
+        window.saveUserApiKey = async function() {
+            if (!db || !currentUser || !ownerVaultConfig) return;
+            const geminiKey = document.getElementById('userGeminiKeyInput').value.trim();
+            const oddsKey = document.getElementById('userOddsKeyInput').value.trim();
+            try {
+                const settingsDocRef = doc(db, 'artifacts', appId, 'users', ownerVaultConfig.ownerUid, 'private_settings', 'api_keys');
+                await setDoc(settingsDocRef, {
+                    geminiApiKey: geminiKey,
+                    oddsApiKey: oddsKey,
+                    updatedAt: Date.now()
+                });
+                window.closeSettingsModal();
+                window.showToast('Chiavi salvate nel tuo Cloud Firestore!');
+            } catch (e) {
+                window.showToast('Errore salvataggio Firestore', 'error');
             }
         };
 
@@ -1300,11 +1263,15 @@
             return `dbet_daily_state_${getTodayDateStr()}`;
         }
 
+        let lastAppliedSnapshotTime = 0;
+
         function saveDailyAnalysisState() {
             if (!hasRunAiAnalysis || !raddoppioPicks || raddoppioPicks.length === 0) return;
+            const nowTs = Date.now();
+            lastAppliedSnapshotTime = nowTs;
             const snapshot = {
                 date: getTodayDateStr(),
-                savedAt: Date.now(),
+                savedAt: nowTs,
                 hasRunAiAnalysis: true,
                 allMatches,
                 raddoppioIds: raddoppioPicks.map(m => String(m.id)),
@@ -1319,16 +1286,53 @@
             }
         }
 
-        window.restoreDailyAnalysisSnapshot = function(snapshot) {
+        window.restoreDailyAnalysisSnapshot = function(rawDocOrSnapshot, fromCloud = false) {
+            if (!rawDocOrSnapshot) return false;
+
+            // Deserializza se proviene dal campo payloadJson di Firestore
+            let snapshot = rawDocOrSnapshot;
+            if (rawDocOrSnapshot.payloadJson && typeof rawDocOrSnapshot.payloadJson === 'string') {
+                try {
+                    snapshot = JSON.parse(rawDocOrSnapshot.payloadJson);
+                } catch (e) {
+                    return false;
+                }
+            }
+
             if (!snapshot || snapshot.date !== getTodayDateStr() || !snapshot.hasRunAiAnalysis) return false;
             if (!Array.isArray(snapshot.allMatches) || snapshot.allMatches.length < 2) return false;
+
+            // Evita di sovrascrivere uno stato più recente già applicato
+            if (snapshot.savedAt && snapshot.savedAt < lastAppliedSnapshotTime) {
+                return true;
+            }
+            lastAppliedSnapshotTime = snapshot.savedAt || Date.now();
+
+            // Aggiorna anche la copia locale del dispositivo corrente
+            if (fromCloud) {
+                try {
+                    localStorage.setItem(getDailyStorageKey(), JSON.stringify(snapshot));
+                } catch (e) {}
+            }
 
             allMatches = snapshot.allMatches;
             if (snapshot.debugState) {
                 Object.assign(debugState, snapshot.debugState);
             }
 
-            applyMathematicalFilter();
+            // Ricalcola solo i mercati che passano il filtro senza sovrascrivere il bestPick calcolato dall'AI!
+            let totalPassingMarkets = 0;
+            allMatches.forEach(m => {
+                const preservedAiPick = (m.bestPick && m.bestPick.calculatedByAi) ? { ...m.bestPick } : null;
+                const freshlyComputed = selectOptimalMarketForRaddoppio(m);
+                m.bestPick = preservedAiPick || freshlyComputed;
+                totalPassingMarkets += (m.passingMarkets || []).length;
+            });
+
+            filteredMatches = allMatches.filter(m => (m.passingMarkets || []).length > 0);
+            filteredMatches.sort((a, b) => b.bestPick.reliability - a.bestPick.reliability);
+            debugState.passedMarketsCount = totalPassingMarkets;
+            document.getElementById('navMatchesBadge').textContent = allMatches.length;
 
             const restoredRaddoppio = (snapshot.raddoppioIds || [])
                 .map(id => allMatches.find(m => String(m.id) === String(id)))
@@ -1361,10 +1365,146 @@
                 const raw = localStorage.getItem(getDailyStorageKey());
                 if (!raw) return false;
                 const parsed = JSON.parse(raw);
-                return window.restoreDailyAnalysisSnapshot(parsed);
+                return window.restoreDailyAnalysisSnapshot(parsed, false);
             } catch (e) {
                 return false;
             }
+        }
+
+        const LEAGUES = [
+            { code: 'ita.1', name: 'Serie A', country: 'Italia', flag: 'IT' },
+            { code: 'eng.1', name: 'Premier League', country: 'Inghilterra', flag: 'EN' },
+            { code: 'esp.1', name: 'La Liga', country: 'Spagna', flag: 'ES' },
+            { code: 'ger.1', name: 'Bundesliga', country: 'Germania', flag: 'DE' },
+            { code: 'fra.1', name: 'Ligue 1', country: 'Francia', flag: 'FR' },
+            { code: 'uefa.champions', name: 'Champions League', country: 'Europa', flag: 'EU' },
+            { code: 'uefa.europa', name: 'Europa League', country: 'Europa', flag: 'EU' },
+            { code: 'ita.2', name: 'Serie B', country: 'Italia', flag: 'IT' },
+            { code: 'ned.1', name: 'Eredivisie', country: 'Olanda', flag: 'NL' },
+            { code: 'por.1', name: 'Primeira Liga', country: 'Portogallo', flag: 'PT' }
+        ];
+
+        function getTodayDateStr() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function getFallbackCrestDataUri(teamName) {
+            const initials = (teamName || 'FC')
+                .split(' ')
+                .map(w => w[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#242429" stroke="#facc15" stroke-width="3"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#facc15" font-family="Inter, sans-serif" font-weight="800" font-size="22">${initials}</text></svg>`;
+            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+        }
+
+        const TAB_ORDER = ['homepage', 'partite', 'salvate'];
+
+        function switchTab(tabName) {
+            if (!TAB_ORDER.includes(tabName)) return;
+            currentActiveTab = tabName;
+
+            TAB_ORDER.forEach((t, idx) => {
+                const sec = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (sec) {
+                    if (t === tabName) sec.classList.remove('hidden');
+                    else sec.classList.add('hidden');
+                }
+                if (btn) {
+                    if (t === tabName) {
+                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-brand-400 transition-colors duration-300';
+                        const indicator = document.getElementById('navLiquidIndicator');
+                        if (indicator) indicator.style.transform = `translateX(${idx * 100}%)`;
+                    } else {
+                        btn.className = 'relative z-10 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-full text-zinc-300/80 hover:text-white transition-colors duration-300';
+                    }
+                }
+            });
+        }
+
+        function initLiquidGlassTouchPhysics() {
+            const navbar = document.getElementById('iosFloatingNavbar');
+            if (navbar) {
+                let isDraggingNav = false;
+                const handleNavPointer = (clientX) => {
+                    const rect = navbar.getBoundingClientRect();
+                    const relX = Math.max(0, Math.min(rect.width - 1, clientX - rect.left));
+                    const idx = Math.min(2, Math.floor((relX / rect.width) * 3));
+                    const targetTab = TAB_ORDER[idx];
+                    if (targetTab && targetTab !== currentActiveTab) switchTab(targetTab);
+                };
+                navbar.addEventListener('touchstart', () => { isDraggingNav = true; }, { passive: true });
+                navbar.addEventListener('touchmove', (e) => {
+                    if (!isDraggingNav || !e.touches[0]) return;
+                    handleNavPointer(e.touches[0].clientX);
+                }, { passive: true });
+                navbar.addEventListener('touchend', () => { isDraggingNav = false; }, { passive: true });
+            }
+
+            const mainArea = document.getElementById('mainSwipeArea');
+            if (mainArea) {
+                let startX = 0, startY = 0;
+                mainArea.addEventListener('touchstart', (e) => {
+                    if (!e.touches[0]) return;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+
+                mainArea.addEventListener('touchend', (e) => {
+                    if (!e.changedTouches[0]) return;
+                    const dx = e.changedTouches[0].clientX - startX;
+                    const dy = e.changedTouches[0].clientY - startY;
+                    if (Math.abs(dx) > 75 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+                        const curIdx = TAB_ORDER.indexOf(currentActiveTab);
+                        if (dx < 0 && curIdx < TAB_ORDER.length - 1) switchTab(TAB_ORDER[curIdx + 1]);
+                        else if (dx > 0 && curIdx > 0) switchTab(TAB_ORDER[curIdx - 1]);
+                    }
+                }, { passive: true });
+            }
+
+            document.querySelectorAll('.sheet-panel').forEach(panel => {
+                let dragStartY = 0, currentTranslateY = 0, draggingSheet = false;
+                const modalId = panel.getAttribute('data-sheet');
+
+                panel.addEventListener('touchstart', (e) => {
+                    if (panel.scrollTop > 4 || !e.touches[0]) return;
+                    dragStartY = e.touches[0].clientY;
+                    draggingSheet = true;
+                    panel.style.transition = 'none';
+                }, { passive: true });
+
+                panel.addEventListener('touchmove', (e) => {
+                    if (!draggingSheet || !e.touches[0]) return;
+                    const deltaY = e.touches[0].clientY - dragStartY;
+                    if (deltaY > 0) {
+                        currentTranslateY = deltaY;
+                        panel.style.transform = `translateY(${deltaY}px)`;
+                    }
+                }, { passive: true });
+
+                panel.addEventListener('touchend', () => {
+                    if (!draggingSheet) return;
+                    draggingSheet = false;
+                    panel.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+                    if (currentTranslateY > 110 && modalId) {
+                        document.getElementById(modalId).classList.add('hidden');
+                    }
+                    panel.style.transform = 'translateY(0)';
+                    currentTranslateY = 0;
+                }, { passive: true });
+            });
+        }
+
+        function factorial(n) {
+            let r = 1;
+            for (let i = 2; i <= n; i++) r *= i;
+            return r;
         }
 
         function computeTeamStrength(recordStr, isHome) {
@@ -1391,7 +1531,10 @@
         // FASE 1: SCARICO PARTITE REALI DI OGGI + MODELLO DI POISSON A 19 MERCATI
         // ============================================================================
         async function fetchDailyMatches() {
-            // Se avevamo già eseguito l'analisi AI oggi, ripristina subito il Raddoppio senza perderlo!
+            // Se avevamo già eseguito l'analisi AI oggi (in locale o già sincronizzata da Firestore), mostra subito il Raddoppio!
+            if (hasRunAiAnalysis && raddoppioPicks.length >= 2) {
+                return;
+            }
             if (tryRestoreTodayAnalysisFromLocal()) {
                 return;
             }
@@ -1399,7 +1542,106 @@
             const todayStr = getTodayDateStr();
             const espnDate = todayStr.replace(/-/g, '');
             const fetched = [];
+
+            const requests = LEAGUES.map(async (lg) => {
+                try {
+                    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.code}/scoreboard?dates=${espnDate}`;
+                    const res = await fetch(url);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const events = data.events || [];
+                    events.forEach(ev => {
+                        const parsed = parseEspnEvent(ev, lg);
+                        if (parsed) fetched.push(parsed);
+                    });
+                } catch (e) {
+                    // Ignora singolo campionato non raggiungibile
+                }
+            });
+
+            await Promise.all(requests);
+
+            // Se nel frattempo il listener Cloud Firestore ha già ripristinato l'analisi di oggi, non sovrascriverla
+            if (hasRunAiAnalysis && raddoppioPicks.length >= 2) {
+                return;
+            }
+
+            if (fetched.length >= 2) {
+                allMatches = fetched;
+                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Live ESPN API - ${fetched.length} match)`;
+            } else {
+                allMatches = getRealisticFallbackMatches(todayStr);
+                debugState.lastFetchTimestamp = `${new Date().toLocaleTimeString('it-IT')} (Palinsesto Europeo integrato)`;
+            }
+
+            debugState.rawEventsCount = allMatches.length;
+            applyMathematicalFilter();
+            buildInitialMathematicalRaddoppio();
         }
+
+        function parseEspnEvent(ev, lg) {
+            try {
+                const comp = ev.competitions?.[0];
+                if (!comp) return null;
+                const competitors = comp.competitors || [];
+                const home = competitors.find(c => c.homeAway === 'home') || competitors[0];
+                const away = competitors.find(c => c.homeAway === 'away') || competitors[1];
+                if (!home || !away) return null;
+
+                const homeTeam = home.team?.shortDisplayName || home.team?.displayName || 'Casa';
+                const awayTeam = away.team?.shortDisplayName || away.team?.displayName || 'Ospiti';
+                const homeLogo = home.team?.logo || getFallbackCrestDataUri(homeTeam);
+                const awayLogo = away.team?.logo || getFallbackCrestDataUri(awayTeam);
+
+                const homeRecord = home.records?.[0]?.summary || '10-5-5';
+                const awayRecord = away.records?.[0]?.summary || '8-6-6';
+                const homeForm = home.form || 'WDWWL';
+                const awayForm = away.form || 'LDWDL';
+
+                const homeStrength = computeTeamStrength(homeRecord, true);
+                const awayStrength = computeTeamStrength(awayRecord, false);
+
+                const xgHome = +(1.15 + homeStrength * 1.25 - (1 - awayStrength) * 0.25).toFixed(2);
+                const xgAway = +(0.85 + awayStrength * 1.10 - (1 - homeStrength) * 0.20).toFixed(2);
+
+                const eventDate = new Date(ev.date);
+                const timeStr = isNaN(eventDate.getTime())
+                    ? '20:45'
+                    : eventDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                const markets = computeExtendedMarketsFromXg(xgHome, xgAway);
+
+                const matchObj = {
+                    id: String(ev.id || `${lg.code}-${homeTeam}-${awayTeam}`),
+                    league: lg.name,
+                    country: lg.country,
+                    flag: lg.flag,
+                    time: timeStr,
+                    homeTeam,
+                    awayTeam,
+                    homeLogo,
+                    awayLogo,
+                    homeRecord,
+                    awayRecord,
+                    homeForm,
+                    awayForm,
+                    xgHome,
+                    xgAway,
+                    markets,
+                    passingMarkets: []
+                };
+
+                matchObj.bestPick = selectOptimalMarketForRaddoppio(matchObj);
+                return matchObj;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        window.onload = function () {
+            renderSavedHistory();
+            initLiquidGlassTouchPhysics();
+        };
 
         function poissonProb(k, lambda) {
             return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
@@ -1546,119 +1788,10 @@
         }
 
         // ============================================================================
-        // GESTIONE MODAL IMPOSTAZIONI & STATO CHIAVI CLOUD FIRESTORE
-        // ============================================================================
-        function openSettingsModal() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        function updateKeyBadge() {
-            const badge = document.getElementById('savedKeyBadge');
-            const oddsBadge = document.getElementById('savedOddsKeyBadge');
-            const savedGemini = window.cloudGeminiKey || '';
-            const savedOdds = window.cloudOddsKey || '';
-
-            if (badge) {
-                if (savedGemini && savedGemini.length > 10) {
-                    badge.textContent = 'Attiva (Firestore)';
-                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
-                } else {
-                    badge.textContent = 'Default';
-                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
-                }
-            }
-
-            if (oddsBadge) {
-                if (savedOdds && savedOdds.length > 8) {
-                    oddsBadge.textContent = 'Attiva (Firestore)';
-                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
-                } else {
-                    oddsBadge.textContent = 'Non inserita';
-                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
-                }
-            }
-        }
-
-        function getActiveGeminiApiKey() {
-            if (window.cloudGeminiKey && window.cloudGeminiKey.trim().length > 10) {
-                return window.cloudGeminiKey.trim();
-            }
-            return apiKey;
-        }
-
-        // ============================================================================
-        // COMBINATORE OTTIMALE RADDOPPIO (SCEGLIE TRA 2 O 3 PARTITE INTORNO A QUOTA 2.00)
-        // ============================================================================
-        function findOptimalCombination2Or3(pool) {
-            const candidates = pool.slice(0, 10);
-            if (candidates.length <= 2) return candidates;
-
-            let bestCombo = candidates.slice(0, 2);
-            let bestScore = -9999;
-
-            // Valuta tutte le coppie (2 partite)
-            for (let i = 0; i < candidates.length; i++) {
-                for (let j = i + 1; j < candidates.length; j++) {
-                    const m1 = candidates[i], m2 = candidates[j];
-                    const totalOdd = m1.bestPick.odd * m2.bestPick.odd;
-                    if (totalOdd >= 1.78 && totalOdd <= 2.30) {
-                        const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability) / 2;
-                        const distPenalty = Math.abs(totalOdd - 2.02) * 32;
-                        const score = avgRel - distPenalty;
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestCombo = [m1, m2];
-                        }
-                    }
-                }
-            }
-
-            // Valuta tutte le terne (3 partite) con quote singole più contenute e altissima affidabilità
-            for (let i = 0; i < candidates.length; i++) {
-                for (let j = i + 1; j < candidates.length; j++) {
-                    for (let k = j + 1; k < candidates.length; k++) {
-                        const m1 = candidates[i], m2 = candidates[j], m3 = candidates[k];
-                        const totalOdd = m1.bestPick.odd * m2.bestPick.odd * m3.bestPick.odd;
-                        if (totalOdd >= 1.85 && totalOdd <= 2.30) {
-                            const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability + m3.bestPick.reliability) / 3;
-                            const distPenalty = Math.abs(totalOdd - 2.04) * 32;
-                            // Bonus se tutte e 3 hanno affidabilità >= 78%
-                            const highRelBonus = (m1.bestPick.reliability >= 78 && m2.bestPick.reliability >= 78 && m3.bestPick.reliability >= 78) ? 3.5 : 0;
-                            const score = avgRel - distPenalty + highRelBonus;
-                            if (score > bestScore) {
-                                bestScore = score;
-                                bestCombo = [m1, m2, m3];
-                            }
-                        }
-                    }
-                }
-            }
-
-            return bestCombo;
-        }
-
-        function buildInitialMathematicalRaddoppio() {
-            const pool = filteredMatches.length >= 2 ? filteredMatches : allMatches;
-            if (pool.length < 2) return;
-
-            raddoppioPicks = findOptimalCombination2Or3(pool);
-            alternativePicks = pool.filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id))).slice(0, 6);
-
-            if (hasRunAiAnalysis) {
-                renderRaddoppioTicket();
-                renderAlternativesList();
-            }
-        }
-
-        // ============================================================================
-        // FASE 2: ANALISI INTELLIGENZA ARTIFICIALE (GEMINI API)
+        // FASE 2: ANALISI INTELLIGENZA ARTIFICIALE APPROFONDITA (DEEP RISK AUDIT + GOOGLE SEARCH)
         // ============================================================================
         async function runFullAiPipeline() {
-            const pool = filteredMatches.length >= 2 ? filteredMatches.slice(0, 9) : allMatches.slice(0, 9);
+            const pool = filteredMatches.length >= 2 ? filteredMatches.slice(0, 12) : allMatches.slice(0, 12);
             if (pool.length < 2) {
                 showToast('Servono almeno 2 partite per generare un raddoppio!', 'error');
                 return;
@@ -1674,34 +1807,56 @@
             const minOdds = parseFloat(document.getElementById('minOddsInput').value) || 1.14;
             const maxOdds = parseFloat(document.getElementById('maxOddsInput').value) || 1.68;
 
-            const candidateDataForAi = pool.map(m => ({
-                id: String(m.id),
-                campionato: `${m.flag} - ${m.league}`,
-                orario: m.time,
-                partita: `${m.homeTeam} vs ${m.awayTeam}`,
-                recordCasa: m.homeRecord,
-                recordOspiti: m.awayRecord,
-                formaCasa: m.homeForm,
-                formaOspiti: m.awayForm,
-                xgStimati: `${m.xgHome} - ${m.xgAway}`,
-                mercatiCheSuperanoIlFiltro: m.passingMarkets.slice(0, 8).map(pm => ({
-                    esito: pm.outcome,
-                    quota: pm.odd
-                }))
-            }));
+            const candidateDataForAi = pool.map(m => {
+                const hStrength = computeTeamStrength(m.homeRecord, true);
+                const aStrength = computeTeamStrength(m.awayRecord, false);
+                return {
+                    id: String(m.id),
+                    campionato: `${m.flag} - ${m.league}`,
+                    orario: m.time,
+                    partita: `${m.homeTeam} vs ${m.awayTeam}`,
+                    statisticheDettagliate: {
+                        recordStagionaleCasa_VPS: m.homeRecord,
+                        recordStagionaleOspiti_VPS: m.awayRecord,
+                        ultime5Casa: m.homeForm,
+                        ultime5Ospiti: m.awayForm,
+                        indiceForzaCasa: +(hStrength * 100).toFixed(0) + '/100',
+                        indiceForzaOspiti: +(aStrength * 100).toFixed(0) + '/100',
+                        xgAttesiCasa: m.xgHome,
+                        xgAttesiOspiti: m.xgAway,
+                        xgTotaliAttesi: +(m.xgHome + m.xgAway).toFixed(2),
+                        differenzialeXg: +(m.xgHome - m.xgAway).toFixed(2)
+                    },
+                    tuttiIMercatiNelRange: m.passingMarkets.map(pm => ({
+                        mercato: pm.outcome,
+                        quota: pm.odd,
+                        probabilitaImplicitaBookmaker: Math.round((1 / pm.odd) * 95) + '%'
+                    }))
+                };
+            });
 
-            const systemInstruction = `Sei un analista calcistico professionista e revisore statistico del rischio, specializzato nella creazione del "Raddoppio del Giorno" (schedina a quota totale moltiplicata intorno a 2.00, range ideale 1.85 - 2.25).
-REGOLE FONDAMENTALI:
-1. Puoi comporre il raddoppio scegliendo 2 OPPURE 3 partite tra quelle fornite: scegli 2 partite se usi quote intorno a 1.38-1.48, oppure 3 partite se preferisci quote più conservative (1.20-1.32) ad altissima copertura.
-2. Per ogni partita valuta TUTTI i mercati nel range ${minOdds}-${maxOdds}: considera con grande attenzione Multigol (es. Multigol 1-4, Multigol 1-3, Multigol 2-4, Multigol Casa 1-3), Under/Over (Over 1.5, Under 3.5), Squadra Segna (1 Segna, 2 Segna), Goal/NoGoal e Doppia Chance (1X, X2).
-3. Calcola direttamente tu la percentuale di affidabilità ("aiReliabilityPercent", numero intero tra 62 e 92) incrociando xG, stato di forma, record stagionale e tipologia di mercato scelto.
-4. Fornisci un'analisi tattica chiara e segnala eventuali trappole nel campo "trapWarning".`;
+            const systemInstruction = `Sei un Chief Risk Analyst e Quantitative Football Strategist professionista con 20 anni di esperienza nel betting exchange e nella costruzione di "Raddoppi" conservativi ad altissima affidabilità (quota totale moltiplicata target: 1.90 - 2.15).
 
-            const userPrompt = `Data palinsesto (Oggi): ${getTodayDateStr()}.
-Ecco le ${candidateDataForAi.length} partite filtrate con i rispettivi mercati che rientrano nel range ${minOdds} - ${maxOdds}:
+IL TUO OBIETTIVO PRIMARIO È NON SBAGLIARE LA SCHEDINA: LA PROTEZIONE DEL CAPITALE VIENE PRIMA DELLA QUOTA ALTA.
+
+PROTOCOLLO OBBLIGATORIO DI ANALISI PROFONDA (ESEGUI QUESTI 6 STEP PER OGNI PARTITA PRIMA DI SCEGLIERE):
+1. VERIFICA CONTESTO E ASSENZE/TURNOVER: Considera il calendario reale (impegni ravvicinati in Champions/Europa League o coppe nazionali, turnover dei titolari, infortuni dei marcatori principali o portieri/difensori centrali, cambio allenatore recente).
+2. ANALISI MOTIVAZIONALE E DI CLASSIFICA: Scarta o declassa le partite dove la favorita è già appagata, o affronta una squadra disperata in lotta salvezza che si chiude in 11 dietro la linea della palla (tipica trappola per i segni "1" o "2" secchi).
+3. STUDIO DELLA VARIANZA TATTICA E SCELTA DEL MERCATO PIÙ SICURO:
+   - NON scegliere mai "1" o "2" fisso se la squadra ospite/casa pareggia molto ("D" frequenti nel form) o se il differenziale xG è inferiore a 0.85: in quei casi usa COPERTURE TATTICHE come "1X", "X2", "1 Segna", "Multigol Casa 1-3" o "Multigol 1-4".
+   - Usa "Over 1.5" o "Multigol 2-4" SOLO se entrambe le squadre hanno propensione offensiva costante e xG totali >= 2.65.
+   - Usa "Under 3.5" o "Multigol 1-3" nelle partite bloccate, scontri diretti tesi o con difese schierate.
+4. EVITA LE TRAPPOLE DI QUOTA ("PUBLIC BETS"): Diffida delle grandi squadre fuori casa con stato di forma altalenante o difesa fragile; se c'è anche un minimo dubbio sulla tenuta mentale o fisica di una squadra, ESCLUDI la partita dal raddoppio principale.
+5. COMPOSIZIONE INTELLIGENTE A 2 O 3 PARTITE:
+   - Scegli 2 PARTITE se trovi 2 eventi blindati con quote ~1.38 - 1.46.
+   - Scegli 3 PARTITE se preferisci usare 3 mercati ultra-protetti (es. 1X, Over 1.5, Multigol 1-4, 1 Segna) con quote ~1.22 - 1.30 la cui moltiplicazione porti a ~1.95 - 2.10 con rischio di rottura minimo.
+6. CALCOLO AFFIDABILITÀ REALE ("aiReliabilityPercent"): Stima la percentuale reale (60-93) penalizzando severamente qualsiasi incognita tattica o difensiva. Spiega nel dettaglio in "tacticalReasoning" il perché tecnico della scelta e in "trapWarning" il rischio specifico monitorato.`;
+
+            const userPrompt = `Data di oggi: ${getTodayDateStr()}.
+Analizza in modo chirurgico e approfondito queste ${candidateDataForAi.length} partite candidate e i loro mercati nel range ${minOdds} - ${maxOdds}:
 ${JSON.stringify(candidateDataForAi, null, 2)}
 
-Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID migliori in "selectedRaddoppioIds" per ottenere una quota moltiplicata vicina a 2.00.`;
+Rifletti attentamente su tutte le variabili tattiche, statistiche, motivazionali e di calendario. Seleziona solo i 2 o 3 ID più sicuri in assoluto per "selectedRaddoppioIds" e restituisci il JSON rigorosamente conforme allo schema.`;
 
             debugState.lastAiPrompt = `--- SYSTEM INSTRUCTION ---\n${systemInstruction}\n\n--- USER PROMPT ---\n${userPrompt}`;
 
@@ -1734,16 +1889,34 @@ Restituisci esclusivamente il JSON strutturato richiesto, scegliendo i 2 o 3 ID 
             try {
                 const activeKey = getActiveGeminiApiKey();
 
-                const payload = {
+                // Payload con Grounding Google Search + Thinking approfondito (con fallback automatico se l'account API non supporta search+schema insieme)
+                const payloadWithSearch = {
                     contents: [{ parts: [{ text: userPrompt }] }],
+                    tools: [{ "google_search": {} }],
                     systemInstruction: { parts: [{ text: systemInstruction }] },
                     generationConfig: {
+                        temperature: 0.2,
                         responseMimeType: "application/json",
                         responseSchema: responseSchema
                     }
                 };
 
-                const result = await callGeminiWithBackoff(activeKey, payload);
+                const payloadStandardDeep = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    generationConfig: {
+                        temperature: 0.2,
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema
+                    }
+                };
+
+                let result;
+                try {
+                    result = await callGeminiWithBackoff(activeKey, payloadWithSearch);
+                } catch (searchErr) {
+                    result = await callGeminiWithBackoff(activeKey, payloadStandardDeep);
+                }
                 const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (!rawJson) throw new Error('Risposta AI vuota');
