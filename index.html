@@ -1,20 +1,78 @@
-<!DOCTYPE html>
-<html lang="it" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DBet - Raddoppio Giornaliero AI</title>
+<!-- Logo SVG per browser tab + Generatore automatico PNG 512x512 per Icona Home iPhone (iOS richiede PNG per apple-touch-icon!) -->
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FEF08A'/><stop offset='50%' stop-color='%23FACC15'/><stop offset='100%' stop-color='%23CA8A04'/></linearGradient></defs><rect width='120' height='120' rx='30' fill='%23111114' stroke='url(%23g)' stroke-width='5'/><path d='M16 24 L54 24 L68 38 L58 60 L44 96 L12 96 L22 24 Z M31 40 L26 80 L40 80 L50 56 L44 40 Z' fill='url(%23g)'/><path d='M62 24 L102 24 L108 42 L94 56 L106 72 L92 96 L50 96 L66 54 L56 42 Z M73 39 L70 50 L85 50 L90 39 Z M68 64 L64 81 L83 81 L88 70 L81 64 Z' fill='%23FFFFFF'/><path d='M64 12 L42 62 L59 62 L46 108 L82 52 L63 52 Z' fill='%23FACC15' stroke='%23111114' stroke-width='4' stroke-linejoin='round'/></svg>">
+    <link id="appleTouchIconLink" rel="apple-touch-icon" sizes="512x512" href="">
+    <script>
+        // iOS Safari ignora gli SVG per "Aggiungi alla schermata Home" e mostra una "D" testuale se non trova un'immagine PNG.
+        // Questo script disegna all'istante il logo aggressivo DBet su un Canvas 512x512 e lo imposta come PNG nativo per iOS.
+        (function generateIosHomeScreenIcon() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
 
-    <!-- Meta Tag per renderla una vera Web App (PWA) su iOS e Android -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="DBet">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#121214">
+                // Sfondo Nero Soft #111114
+                ctx.fillStyle = '#111114';
+                ctx.fillRect(0, 0, 512, 512);
 
-    <!-- Logo SVG Aggressivo Monogramma "DB" Giallo & Nero per la schermata Home del telefono -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FEF08A'/><stop offset='50%' stop-color='%23FACC15'/><stop offset='100%' stop-color='%23CA8A04'/></linearGradient></defs><rect width='120' height='120' rx='30' fill='%23111114' stroke='url(%23g)' stroke-width='5'/><path d='M16 24 L54 24 L68 38 L58 60 L44 96 L12 96 L22 24 Z M31 40 L26 80 L40 80 L50 56 L44 40 Z' fill='url(%23g)'/><path d='M62 24 L102 24 L108 42 L94 56 L106 72 L92 96 L50 96 L66 54 L56 42 Z M73 39 L70 50 L85 50 L90 39 Z M68 64 L64 81 L83 81 L88 70 L81 64 Z' fill='%23FFFFFF'/><path d='M64 12 L42 62 L59 62 L46 108 L82 52 L63 52 Z' fill='%23FACC15' stroke='%23111114' stroke-width='4' stroke-linejoin='round'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FEF08A'/><stop offset='50%' stop-color='%23FACC15'/><stop offset='100%' stop-color='%23CA8A04'/></linearGradient></defs><rect width='120' height='120' rx='30' fill='%23111114' stroke='url(%23g)' stroke-width='5'/><path d='M16 24 L54 24 L68 38 L58 60 L44 96 L12 96 L22 24 Z M31 40 L26 80 L40 80 L50 56 L44 40 Z' fill='url(%23g)'/><path d='M62 24 L102 24 L108 42 L94 56 L106 72 L92 96 L50 96 L66 54 L56 42 Z M73 39 L70 50 L85 50 L90 39 Z M68 64 L64 81 L83 81 L88 70 L81 64 Z' fill='%23FFFFFF'/><path d='M64 12 L42 62 L59 62 L46 108 L82 52 L63 52 Z' fill='%23FACC15' stroke='%23111114' stroke-width='4' stroke-linejoin='round'/></svg>">
+                // Bagliore radiale dorato centrale
+                const glow = ctx.createRadialGradient(256, 256, 20, 256, 256, 240);
+                glow.addColorStop(0, 'rgba(250, 204, 21, 0.22)');
+                glow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+                ctx.fillStyle = glow;
+                ctx.fillRect(0, 0, 512, 512);
+
+                const scale = 512 / 120;
+                ctx.save();
+                ctx.scale(scale, scale);
+
+                const goldGrad = ctx.createLinearGradient(0, 0, 120, 120);
+                goldGrad.addColorStop(0, '#FEF08A');
+                goldGrad.addColorStop(0.5, '#FACC15');
+                goldGrad.addColorStop(1, '#CA8A04');
+
+                // Scudo Esagonale Aggressivo
+                ctx.beginPath();
+                ctx.moveTo(60, 6);
+                ctx.lineTo(110, 26);
+                ctx.lineTo(98, 98);
+                ctx.lineTo(60, 114);
+                ctx.lineTo(22, 98);
+                ctx.lineTo(10, 26);
+                ctx.closePath();
+                ctx.fillStyle = '#16161B';
+                ctx.fill();
+                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = goldGrad;
+                ctx.stroke();
+
+                // Lettera D Tagliata in oro
+                const dPath = new Path2D('M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z');
+                ctx.fillStyle = goldGrad;
+                ctx.fill(dPath, 'evenodd');
+
+                // Lettera B Affilata in bianco
+                const bPath = new Path2D('M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fill(bPath, 'evenodd');
+
+                // Saetta Centrale che Fonde D e B
+                const boltPath = new Path2D('M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z');
+                ctx.fillStyle = '#FACC15';
+                ctx.strokeStyle = '#111114';
+                ctx.lineWidth = 3.5;
+                ctx.lineJoin = 'round';
+                ctx.stroke(boltPath);
+                ctx.fill(boltPath);
+
+                ctx.restore();
+
+                const pngDataUrl = canvas.toDataURL('image/png');
+                const appleLink = document.getElementById('appleTouchIconLink');
+                if (appleLink) appleLink.href = pngDataUrl;
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -186,41 +244,31 @@
         }
 
         /* ==========================================================================
-           NATIVO iPHONE PWA STANDALONE SHELL (ANTI-BLUR STATUS BAR & 100dvh LOCK)
+           NATIVO iPHONE PWA STANDALONE SHELL (ANTI-BLUR STATUS BAR & INTERATTIVO AL 100%)
            ========================================================================== */
         html, body {
-            height: 100dvh;
+            min-height: 100dvh;
             width: 100%;
-            overflow: hidden;
-            position: fixed;
-            inset: 0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
         /* Fascia protettiva superiore per Notch / Dynamic Island iOS: evita che iOS sfumi il titolo */
         .ios-status-bar-shield {
             height: env(safe-area-inset-top, 0px);
             width: 100%;
-            background: rgba(14, 14, 17, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(14, 14, 17, 0.96);
             flex-shrink: 0;
             z-index: 40;
         }
         .ios-app-shell {
-            height: 100dvh;
-            max-height: 100dvh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-        }
-        .ios-scroll-main {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem);
         }
         .ios-safe-bottom-nav {
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.65rem);
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
         }
         .ios-toast-safe {
             top: calc(env(safe-area-inset-top, 0px) + 4.25rem);
@@ -229,60 +277,60 @@
 </head>
 <body class="flex flex-col items-center text-zinc-100">
 
-    <!-- Contenitore Mobile App bloccato a 100dvh con scroll interno nativo iPhone -->
+    <!-- Contenitore Mobile App fluido e cliccabile al 100% su iPhone e Desktop -->
     <div id="appTouchContainer" class="w-full max-w-[480px] ios-app-shell relative shadow-2xl border-x border-white/10">
 
-        <!-- Scudo Status Bar iPhone (impedisce la sfumatura del titolo sotto l'orario/Dynamic Island) -->
-        <div class="ios-status-bar-shield"></div>
+        <!-- Header Unificato Sticky con Scudo Status Bar iPhone integrato (il titolo non sfuma mai sotto l'orologio iOS) -->
+        <div class="sticky top-0 z-30 w-full">
+            <div class="ios-status-bar-shield"></div>
+            <header class="liquid-glass border-x-0 border-t-0 px-4 py-2.5 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-3 min-w-0">
+                    <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
+                    <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-400/20 via-transparent to-transparent"></div>
+                        <svg class="w-8 h-8 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="dbGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#FEF08A"/>
+                                    <stop offset="50%" stop-color="#FACC15"/>
+                                    <stop offset="100%" stop-color="#CA8A04"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Scudo Esagonale Aggressivo di Sfondo -->
+                            <polygon points="60,6 110,26 98,98 60,114 22,98 10,26" fill="#141418" stroke="url(#dbGoldGrad)" stroke-width="3.5" opacity="0.95"/>
+                            <!-- Lettera D Tagliata in Stile Esports -->
+                            <path d="M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z" fill="url(#dbGoldGrad)"/>
+                            <!-- Lettera B Affilata e Interbloccata -->
+                            <path d="M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z" fill="#FFFFFF"/>
+                            <!-- Saetta Centrale che Fonde D e B -->
+                            <path d="M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z" fill="#FACC15" stroke="#121214" stroke-width="3.5" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="font-black text-2xl tracking-tighter italic text-white leading-none">D<span class="text-brand-400">Bet</span></h1>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- Pulsante Console di Debug per Sviluppatori -->
+                    <button onclick="openDebugModal()" title="Console Debug Sviluppatori" class="ios-press px-3.5 h-9 rounded-full liquid-glass border-brand-400/40 hover:border-brand-400 text-brand-400 flex items-center gap-1.5 text-xs font-extrabold">
+                        <i class="fa-solid fa-bug text-xs"></i>
+                        <span>Debug</span>
+                    </button>
+
+                    <!-- Pulsante Impostazioni -->
+                    <button onclick="openSettingsModal()" title="Impostazioni" class="ios-press w-9 h-9 rounded-full liquid-glass flex items-center justify-center text-zinc-200 hover:text-brand-400">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                    </button>
+                </div>
+            </header>
+        </div>
 
         <!-- Sfere di luce soffusa per esaltare il vetro liquido -->
         <div class="pointer-events-none fixed top-24 left-1/2 -translate-x-1/2 w-72 h-40 bg-brand-400/10 rounded-full blur-3xl z-0"></div>
 
-        <!-- TOP APP BAR: Nitida, ben visibile sotto la Dynamic Island di iPhone -->
-        <header class="z-30 liquid-glass border-x-0 border-t-0 px-4 py-2.5 flex items-center justify-between gap-2 shrink-0">
-            <div class="flex items-center gap-3 min-w-0">
-                <!-- Logo SVG Aggressivo Monogramma "DB" Intrecciato con Taglio Fulmine -->
-                <div class="w-10 h-10 rounded-2xl bg-darkbg/95 border border-brand-400/60 flex items-center justify-center shadow-lg shadow-brand-400/15 shrink-0 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-brand-400/20 via-transparent to-transparent"></div>
-                    <svg class="w-8 h-8 relative z-10" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="dbGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FEF08A"/>
-                                <stop offset="50%" stop-color="#FACC15"/>
-                                <stop offset="100%" stop-color="#CA8A04"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- Scudo Esagonale Aggressivo di Sfondo -->
-                        <polygon points="60,6 110,26 98,98 60,114 22,98 10,26" fill="#141418" stroke="url(#dbGoldGrad)" stroke-width="3.5" opacity="0.95"/>
-                        <!-- Lettera D Tagliata in Stile Esports -->
-                        <path d="M18 28 L55 28 L67 41 L57 65 L44 92 L13 92 L22 28 Z M31 41 L26 79 L39 79 L48 59 L43 41 Z" fill="url(#dbGoldGrad)"/>
-                        <!-- Lettera B Affilata e Interbloccata -->
-                        <path d="M60 28 L101 28 L107 44 L93 57 L105 72 L91 92 L50 92 L65 56 L55 44 Z M72 41 L69 51 L84 51 L89 41 Z M67 64 L63 79 L82 79 L87 69 L80 64 Z" fill="#FFFFFF"/>
-                        <!-- Saetta Centrale che Fonde D e B -->
-                        <path d="M65 13 L44 60 L59 60 L47 107 L81 51 L64 51 Z" fill="#FACC15" stroke="#121214" stroke-width="3.5" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <div class="min-w-0">
-                    <h1 class="font-black text-2xl tracking-tighter italic text-white leading-none">D<span class="text-brand-400">Bet</span></h1>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0">
-                <!-- Pulsante Console di Debug per Sviluppatori -->
-                <button onclick="openDebugModal()" title="Console Debug Sviluppatori" class="ios-press px-3.5 h-9 rounded-full liquid-glass border-brand-400/40 hover:border-brand-400 text-brand-400 flex items-center gap-1.5 text-xs font-extrabold">
-                    <i class="fa-solid fa-bug text-xs"></i>
-                    <span>Debug</span>
-                </button>
-
-                <!-- Pulsante Impostazioni -->
-                <button onclick="openSettingsModal()" title="Impostazioni" class="ios-press w-9 h-9 rounded-full liquid-glass flex items-center justify-center text-zinc-200 hover:text-brand-400">
-                    <i class="fa-solid fa-gear text-sm"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- CONTENUTO PRINCIPALE SCORREVOLE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
-        <main id="mainSwipeArea" class="ios-scroll-main no-scrollbar px-3.5 pt-3.5 space-y-4 relative z-10 spring-tab-transition">
+        <!-- CONTENUTO PRINCIPALE DELLE 3 SCHEDE (Supporta Swipe Orizzontale con il dito) -->
+        <main id="mainSwipeArea" class="flex-1 px-3.5 pt-3.5 space-y-4 relative z-10 spring-tab-transition">
 
             <!-- ==========================================
                  TAB 1: HOMEPAGE
@@ -750,7 +798,7 @@
              Supporta sia il tocco sia il trascinamento del dito sulla barra
              ============================================================================ -->
         <div class="fixed ios-safe-bottom-nav left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[330px] z-40 pointer-events-auto">
-            <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none touch-none">
+            <nav id="iosFloatingNavbar" class="ios-floating-nav rounded-full p-1 grid grid-cols-3 items-center relative select-none">
                 <!-- Indicatore a Pillola Liquida Scorrevole -->
                 <div id="navLiquidIndicator" class="absolute top-1 bottom-1 left-1 w-[calc((100%-8px)/3)] rounded-full pointer-events-none z-0"></div>
 
@@ -2804,6 +2852,109 @@ Rifletti attentamente su tutte le variabili tattiche, statistiche, motivazionali
             const parts = yyyyMmDd.split('-');
             if (parts.length !== 3) return yyyyMmDd;
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        // ============================================================================
+        // COMBINATORE OTTIMALE RADDOPPIO (SCEGLIE TRA 2 O 3 PARTITE INTORNO A QUOTA 2.00)
+        // ============================================================================
+        function findOptimalCombination2Or3(pool) {
+            const candidates = pool.slice(0, 10);
+            if (candidates.length <= 2) return candidates;
+
+            let bestCombo = candidates.slice(0, 2);
+            let bestScore = -9999;
+
+            for (let i = 0; i < candidates.length; i++) {
+                for (let j = i + 1; j < candidates.length; j++) {
+                    const m1 = candidates[i], m2 = candidates[j];
+                    const totalOdd = m1.bestPick.odd * m2.bestPick.odd;
+                    if (totalOdd >= 1.78 && totalOdd <= 2.30) {
+                        const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability) / 2;
+                        const distPenalty = Math.abs(totalOdd - 2.02) * 32;
+                        const score = avgRel - distPenalty;
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestCombo = [m1, m2];
+                        }
+                    }
+                }
+            }
+
+            for (let i = 0; i < candidates.length; i++) {
+                for (let j = i + 1; j < candidates.length; j++) {
+                    for (let k = j + 1; k < candidates.length; k++) {
+                        const m1 = candidates[i], m2 = candidates[j], m3 = candidates[k];
+                        const totalOdd = m1.bestPick.odd * m2.bestPick.odd * m3.bestPick.odd;
+                        if (totalOdd >= 1.85 && totalOdd <= 2.30) {
+                            const avgRel = (m1.bestPick.reliability + m2.bestPick.reliability + m3.bestPick.reliability) / 3;
+                            const distPenalty = Math.abs(totalOdd - 2.04) * 32;
+                            const highRelBonus = (m1.bestPick.reliability >= 78 && m2.bestPick.reliability >= 78 && m3.bestPick.reliability >= 78) ? 3.5 : 0;
+                            const score = avgRel - distPenalty + highRelBonus;
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestCombo = [m1, m2, m3];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestCombo;
+        }
+
+        function buildInitialMathematicalRaddoppio() {
+            const pool = filteredMatches.length >= 2 ? filteredMatches : allMatches;
+            if (pool.length < 2) return;
+
+            raddoppioPicks = findOptimalCombination2Or3(pool);
+            alternativePicks = pool.filter(m => !raddoppioPicks.some(r => String(r.id) === String(m.id))).slice(0, 6);
+
+            if (hasRunAiAnalysis) {
+                renderRaddoppioTicket();
+                renderAlternativesList();
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function updateKeyBadge() {
+            const badge = document.getElementById('savedKeyBadge');
+            const oddsBadge = document.getElementById('savedOddsKeyBadge');
+            const savedGemini = window.cloudGeminiKey || '';
+            const savedOdds = window.cloudOddsKey || '';
+
+            if (badge) {
+                if (savedGemini && savedGemini.length > 10) {
+                    badge.textContent = 'Attiva (Firestore)';
+                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
+                } else {
+                    badge.textContent = 'Default';
+                    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
+                }
+            }
+
+            if (oddsBadge) {
+                if (savedOdds && savedOdds.length > 8) {
+                    oddsBadge.textContent = 'Attiva (Firestore)';
+                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-brand-400/20 text-brand-400 border border-brand-400/30 font-bold';
+                } else {
+                    oddsBadge.textContent = 'Non inserita';
+                    oddsBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300';
+                }
+            }
+        }
+
+        function getActiveGeminiApiKey() {
+            if (window.cloudGeminiKey && window.cloudGeminiKey.trim().length > 10) {
+                return window.cloudGeminiKey.trim();
+            }
+            return apiKey;
         }
     </script>
 </body>
